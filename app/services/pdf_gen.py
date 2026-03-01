@@ -1,5 +1,4 @@
 import os
-import io
 import datetime
 import boto3
 from botocore.config import Config
