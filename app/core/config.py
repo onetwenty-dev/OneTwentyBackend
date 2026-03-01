@@ -10,7 +10,8 @@ def load_json_secrets() -> dict:
     if os.path.exists(secrets_path):
         try:
             with open(secrets_path, "r") as f:
-                return json.load(f)
+                data = json.load(f)
+                return {k: v.strip() if isinstance(v, str) else v for k, v in data.items()}
         except Exception:
             return {}
     return {}

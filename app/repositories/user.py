@@ -159,3 +159,22 @@ class UserRepository:
         finally:
             cursor.close()
             conn.close()
+    def get_owner_details(self, tenant_id: int) -> Optional[Dict[str, Any]]:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        try:
+            cursor.execute(
+                """SELECT u.name, u.email 
+                   FROM users u
+                   JOIN tenant_users tu ON tu.user_id = u.id
+                   WHERE tu.tenant_id = %s AND tu.role = 'owner'
+                   LIMIT 1""",
+                (tenant_id,)
+            )
+            row = cursor.fetchone()
+            if row:
+                return {"name": row[0], "email": row[1]}
+            return None
+        finally:
+            cursor.close()
+            conn.close()

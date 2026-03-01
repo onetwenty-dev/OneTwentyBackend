@@ -17,3 +17,6 @@ email-validator
 boto3
 amazon-transcribe
 python-dateutil
+pandas
+matplotlib
+fpdf2
