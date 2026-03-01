@@ -93,22 +93,27 @@ class PDFGenerator:
         with tempfile.TemporaryDirectory() as tmp_dir:
             html_path = os.path.join(tmp_dir, "report.html")
             pdf_path = os.path.join(tmp_dir, "report.pdf")
+            user_data_dir = os.path.join(tmp_dir, "user-data")
+            os.makedirs(user_data_dir, exist_ok=True)
             
             with open(html_path, "w", encoding="utf-8") as f:
                 f.write(html_content)
             
             # Use aggressive stability flags for Linux ARM / CI environments
+            # NOTE: Removed --single-process as it can cause V8 conflicts.
+            # Added --user-data-dir to a writable temp path to avoid UID 0 / Snap permission issues.
             args = [
                 browser_path,
-                "--headless", # Prefer standard headless for max compatibility on older ARM distros
+                "--headless=new", 
                 "--disable-gpu",
                 "--no-sandbox",
-                "--no-zygote", # Crucial for some Linux environments
-                "--single-process", # Sometimes helps on low-RAM ARM devices
+                "--no-zygote",
                 "--disable-dev-shm-usage",
                 "--disable-software-rasterizer",
                 "--disable-extensions",
                 "--disable-setuid-sandbox",
+                "--disable-gpu-sandbox",
+                f"--user-data-dir={user_data_dir}",
                 f"--print-to-pdf={pdf_path}",
                 "--no-pdf-header-footer",
                 html_path
@@ -118,7 +123,7 @@ class PDFGenerator:
             browser_start = time.time()
             try:
                 # Add a 30-second timeout to prevent the API from hanging forever.
-                res = subprocess.run(args, check=True, capture_output=True, text=True, timeout=30)
+                res = subprocess.run(args, check=True, capture_output=True, text=True, timeout=15)
                 logger.info(f"[PDF] Browser execution took {time.time() - browser_start:.2f}s")
                 
                 if not os.path.exists(pdf_path):
@@ -130,7 +135,8 @@ class PDFGenerator:
                 with open(pdf_path, "rb") as f:
                     return f.read()
             except subprocess.TimeoutExpired:
-                logger.error("[PDF] Browser timed out after 30s.")
+                logger.error("[PDF] Browser timed out after 15s.")
+                # Fallback: sometimes --headless=new hangs but old --headless works, or vice versa.
                 raise Exception("PDF generation timed out (browser hung). Check Chromium installation and dependencies.")
             except subprocess.CalledProcessError as e:
                 err_msg = f"Browser failed (code {e.returncode}):\n{e.stderr}\n{e.stdout}"
