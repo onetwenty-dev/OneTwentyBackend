@@ -72,22 +72,37 @@ class PDFGenerator:
         logger.info(f"[PDF] Render complete in {time.time() - render_start:.2f}s")
         
         # 4. Browser Selection
-        import platform
+        import platform, shutil
         system = platform.system()
         
         if system == "Windows":
             browser_path = r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
         else:
-            # Common Linux paths (including ARM/Snap)
-            paths = [
-                "/usr/bin/chromium-browser",
-                "/usr/bin/chromium",
-                "/usr/bin/google-chrome",
-                "/usr/bin/microsoft-edge",
-                "/snap/bin/chromium", # For Ubuntu Snap
-                "/usr/bin/brave-browser"
-            ]
-            browser_path = next((p for p in paths if os.path.exists(p)), "chromium")
+            # For Linux (especially ARM): prioritize actual chromium binary over wrapper scripts
+            # and try snap-specific paths last.
+            possible_binaries = ["chromium", "google-chrome", "microsoft-edge", "chromium-browser", "brave-browser"]
+            browser_path = None
+            
+            for b in possible_binaries:
+                path = shutil.which(b)
+                if path:
+                    # Check if it's the broken snap wrapper
+                    if path == "/usr/bin/chromium-browser":
+                        # If we have ONLY this, we'll keep it as a last resort,
+                        # but we'll try to find a real one first.
+                        browser_path = browser_path or path
+                    else:
+                        browser_path = path
+                        break
+            
+            # Absolute fallbacks for common Snap locations if which fails
+            if not browser_path:
+                for p in ["/snap/bin/chromium", "/usr/bin/chromium"]:
+                    if os.path.exists(p):
+                        browser_path = p
+                        break
+            
+            browser_path = browser_path or "chromium"
 
         # 5. Execute Browser Headless
         # CRITICAL for Linux Snap: Snaps write to a private /tmp. 
