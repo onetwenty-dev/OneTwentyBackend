@@ -25,7 +25,7 @@ def help_me():
     print("  user = repo.get_by_email('test@example.com')")
 
 print("----------------------------------------------------------------")
-print("Nightscout SaaS Shell (like django shell)")
+print("OneTwenty SaaS Shell (like django shell)")
 print("----------------------------------------------------------------")
 help_me()
 print("")

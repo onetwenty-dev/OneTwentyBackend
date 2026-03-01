@@ -37,7 +37,7 @@ class JSONFormatter(logging.Formatter):
         return json.dumps(log_data)
 
 
-def setup_logger(name: str = "nightscout") -> logging.Logger:
+def setup_logger(name: str = "OneTwenty") -> logging.Logger:
     """
     Set up and return a logger with JSON formatting.
     

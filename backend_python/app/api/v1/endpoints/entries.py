@@ -28,7 +28,7 @@ async def create_entries(
         entry_dict = entry.dict()
         entry_dict['tenant_id'] = tenant_id
         
-        # Add Nightscout-compatible fields
+        # Add OneTwenty-compatible fields
         if 'date' in entry_dict:
             entry_dict['mills'] = entry_dict['date']
             if 'dateString' not in entry_dict:
@@ -72,7 +72,7 @@ async def get_entries(
     
     tenant_id = None
 
-    # 1. Try API key first (for Nightscout uploaders)
+    # 1. Try API key first (for OneTwenty uploaders)
     auth_start = time.time()
     if api_secret:
         # Standard behavior: if key is invalid, 401. 
@@ -250,7 +250,7 @@ async def get_current_entry(
 ):
     """
     Returns the most recent entry in TSV format (tab-separated values).
-    Original Nightscout API endpoint for uploaders to check last entry.
+    Original OneTwenty API endpoint for uploaders to check last entry.
     Format: dateString \t date \t sgv \t direction \t device
     """
     from fastapi.responses import PlainTextResponse
@@ -305,7 +305,7 @@ async def get_current_entry(
     direction = entry.get('direction', '')
     device = entry.get('device', '')
     
-    # Wrap strings in quotes like original Nightscout
+    # Wrap strings in quotes like original OneTwenty
     tsv_line = f'"{dateString}"\t{date}\t{sgv}\t"{direction}"\t"{device}"\n'
     
     return PlainTextResponse(content=tsv_line, media_type="text/plain; charset=utf-8")

@@ -41,15 +41,15 @@ def get_password_hash(password: str) -> str:
 def sha1_hash(text: str) -> str:
     """
     Generate SHA-1 hash of the input text.
-    Used for Nightscout API secret compatibility.
+    Used for OneTwenty API secret compatibility.
     """
     return hashlib.sha1(text.encode('utf-8')).hexdigest()
 
 def verify_api_secret(provided_secret: str, stored_secret: str) -> bool:
     """
-    Verify API secret with backward compatibility for Nightscout clients.
+    Verify API secret with backward compatibility for OneTwenty clients.
     
-    Nightscout clients (xDrip, Spike, etc.) send SHA-1 hashed secrets.
+    OneTwenty clients (xDrip, Spike, etc.) send SHA-1 hashed secrets.
     We need to compare:
     1. SHA-1(provided_secret) == stored_secret (plain text stored)
     2. provided_secret == stored_secret (already hashed)
@@ -66,7 +66,7 @@ def verify_api_secret(provided_secret: str, stored_secret: str) -> bool:
     if sha1_hash(stored_secret) == provided_secret:
         return True
     
-    # Method 2: Direct comparison (for non-Nightscout clients or already hashed)
+    # Method 2: Direct comparison (for non-OneTwenty clients or already hashed)
     if provided_secret == stored_secret:
         return True
     

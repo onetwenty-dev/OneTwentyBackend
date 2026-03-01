@@ -2,7 +2,7 @@
     "info": {
         "_postman_id": "1087dc7e-ffb4-4aab-a4f5-4fb749a8580c",
         "name": "OneTwenty \u2014 Python Backend API",
-        "description": "All HTTP API endpoints for the OneTwenty multi-tenant Nightscout backend.\n\nBase URL: https://{{slug}}.onetwenty.dev/api/v1\n\nVariables:\n  base_url   = https://onetwenty.dev\n  slug       = ayush  (your tenant slug)\n  access_token  = <JWT access token from /auth/login>\n  api_secret_hash = <SHA-1 hash of your API secret>",
+        "description": "All HTTP API endpoints for the OneTwenty multi-tenant OneTwenty backend.\n\nBase URL: https://{{slug}}.onetwenty.dev/api/v1\n\nVariables:\n  base_url   = https://onetwenty.dev\n  slug       = ayush  (your tenant slug)\n  access_token  = <JWT access token from /auth/login>\n  api_secret_hash = <SHA-1 hash of your API secret>",
         "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
         "_exporter_id": "30812963"
     },
@@ -665,7 +665,7 @@
                                 }
                             ]
                         },
-                        "description": "Nightscout find[] query syntax. Filters entries where sgv \u2265 120."
+                        "description": "OneTwenty find[] query syntax. Filters entries where sgv \u2265 120."
                     },
                     "response": []
                 },

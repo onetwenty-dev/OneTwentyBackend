@@ -3,11 +3,11 @@ from typing import Dict, Any, Optional
 
 class TenantSettings(BaseModel):
     """
-    Nightscout tenant-specific settings.
+    OneTwenty tenant-specific settings.
     These replace environment variables in the SaaS model.
     """
     # Display
-    title: str = "Nightscout"
+    title: str = "OneTwenty"
     units: str = "mg/dl"  # or "mmol"
     theme: str = "default"
     language: str = "en"

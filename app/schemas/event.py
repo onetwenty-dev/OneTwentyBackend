@@ -18,7 +18,7 @@ class EventBase(BaseModel):
     absolute: Optional[float] = Field(None, description="Absolute units/hr for temp basal")
     profile: Optional[str] = Field(None, description="Profile name if profile switch event")
     
-    # Allow extra fields for Nightscout compatibility
+    # Allow extra fields for OneTwenty compatibility
     class Config:
         extra = "allow"
 

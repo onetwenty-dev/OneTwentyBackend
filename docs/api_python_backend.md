@@ -3,7 +3,7 @@
 > **Base URL:** `/api/v1`
 >
 > **Framework:** FastAPI (Python)  
-> **Architecture:** Multi-tenant SaaS — each user belongs to a **tenant** (isolated Nightscout instance), identified by subdomain slug.
+> **Architecture:** Multi-tenant SaaS — each user belongs to a **tenant** (isolated OneTwenty instance), identified by subdomain slug.
 
 ---
 
@@ -280,7 +280,7 @@ curl https://onetwenty.dev/api/v1/auth/profile \
 {
   "user_id": 1,
   "tenant_id": 5,
-  "tenant_name": "Ayush's Nightscout",
+  "tenant_name": "Ayush's OneTwenty",
   "slug": "ayush",
   "subdomain_url": "https://ayush.onetwenty.dev"
 }
@@ -319,14 +319,14 @@ curl https://ayush.onetwenty.dev/api/v1/status.json
 ```json
 {
   "status": "ok",
-  "name": "Ayush's Nightscout",
+  "name": "Ayush's OneTwenty",
   "version": "15.0.0-saas",
   "serverTime": null,
   "apiEnabled": true,
   "careportalEnabled": true,
   "boluscalcEnabled": true,
   "settings": {
-    "title": "Nightscout",
+    "title": "OneTwenty",
     "units": "mg/dl",
     "theme": "default",
     "language": "en",
@@ -747,12 +747,12 @@ ws.onmessage = (event) => {
 
 ---
 
-## Differences from Original Nightscout API
+## Differences from Original OneTwenty API
 
-| Feature | Original Nightscout | OneTwenty Python Backend |
+| Feature | Original OneTwenty | OneTwenty Python Backend |
 |---------|--------------------|-----------------------------|
 | **Multi-tenancy** | Single instance per user | Shared SaaS, isolated by tenant |
-| **Auth** | API Secret + Nightscout tokens | API Secret + JWT + Subdomain |
+| **Auth** | API Secret + OneTwenty tokens | API Secret + JWT + Subdomain |
 | **User accounts** | None (just API secret) | Full signup/login with JWT |
 | **Entries GET formats** | JSON, TSV, CSV, TXT, HTML | JSON (GET list), TSV (current) |
 | **`If-Modified-Since`** | Supported | Not yet implemented |

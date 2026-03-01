@@ -7,10 +7,9 @@ OneTwenty is a multi-tenant SaaS platform providing unified continuous glucose m
 ### Core Design Principles
 
 1. **Multi-Tenant Architecture**: Isolated data spaces per patient with shared infrastructure
-2. **Nightscout API Compatibility**: Protocol-level compatibility without code reuse
-3. **Real-Time First**: WebSocket-based live updates with 1-3 minute sync intervals
-4. **AI-Native**: Built-in AI for pattern analysis and natural language logging
-5. **Zero Setup**: Cloud-hosted with instant account creation (vs. self-hosted Nightscout)
+2. **Real-Time First**: WebSocket-based live updates with 1-3 minute sync intervals
+3. **AI-Native**: Built-in AI for pattern analysis and natural language logging
+4. **Zero Setup**: Cloud-hosted with instant account creation (vs. self-hosted Nightscout)
 
 ## 2. System Architecture
 
@@ -174,7 +173,6 @@ OneTwenty is a multi-tenant SaaS platform providing unified continuous glucose m
                             ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │  2. OneTwenty Uploader polls API (every 5 min)                  │
-│     • Transforms to Nightscout format                           │
 │     • POST /api/v1/entries with API secret                      │
 └─────────────────────────────────────────────────────────────────┘
                             │
@@ -206,7 +204,7 @@ OneTwenty is a multi-tenant SaaS platform providing unified continuous glucose m
 **Decision**: Multi-tenant architecture with logical data isolation
 
 **Rationale**:
-- **Cost**: Shared infrastructure vs. one server per patient (Nightscout model)
+- **Cost**: Shared infrastructure vs. one server per patient
 - **Scalability**: Horizontal scaling without per-tenant infrastructure
 - **Onboarding**: Instant account creation vs. manual server provisioning
 - **Operations**: Single deployment, centralized monitoring
@@ -222,7 +220,7 @@ OneTwenty is a multi-tenant SaaS platform providing unified continuous glucose m
 
 **Rationale**:
 - **PostgreSQL**: ACID transactions for auth, foreign key constraints, complex joins
-- **MongoDB**: High write throughput for glucose entries (every 1-5 min), flexible schema for Nightscout compatibility
+- **MongoDB**: High write throughput for glucose entries (every 1-5 min)
 
 **Trade-off**: Increased operational complexity, but optimized for each data type
 
@@ -243,7 +241,6 @@ OneTwenty is a multi-tenant SaaS platform providing unified continuous glucose m
 **Rationale**:
 - **Performance**: No framework overhead, faster load times
 - **Bundle Size**: ~50KB vs. 200KB+ with frameworks
-- **Compatibility**: Works with existing Nightscout client code
 - **Simplicity**: Direct DOM manipulation
 
 ### 6.5 Subdomain-Based Tenancy
@@ -336,7 +333,7 @@ OneTwenty is a multi-tenant SaaS platform providing unified continuous glucose m
 ### Data Protection
 
 - **Passwords**: bcrypt (cost factor 12)
-- **API Secrets**: Plain-text (Nightscout compatibility)
+- **API Secrets**: SHA1
 - **Data in Transit**: TLS 1.3
 - **Database Backups**: AES-256 encryption
 

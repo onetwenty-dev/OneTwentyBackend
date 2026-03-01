@@ -1,4 +1,4 @@
-# Nightscout API v1 Documentation
+# OneTwenty API v1 Documentation
 
 > **Base URL:** `/api/v1`
 >
@@ -109,7 +109,7 @@
 
 ## Authentication Methods
 
-Nightscout API v1 supports three authentication methods. All write/delete operations require an API key to be set on the server.
+OneTwenty API v1 supports three authentication methods. All write/delete operations require an API key to be set on the server.
 
 ### 1. API Secret Header (Hashed)
 
@@ -218,7 +218,7 @@ curl -H "Accept: application/json" https://YOUR-SITE/api/v1/status.json
 ```json
 {
   "status": "ok",
-  "name": "Nightscout",
+  "name": "OneTwenty",
   "version": "14.2.3",
   "serverTime": "2025-08-27T12:00:00.000Z",
   "serverTimeEpoch": 1756339200000,

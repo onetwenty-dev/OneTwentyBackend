@@ -15,7 +15,7 @@ def get_tenant_from_api_key(
     Used by: xDrip, Loop, Uploader devices.
     
     Supports both plain text and SHA-1 hashed secrets for backward compatibility
-    with original Nightscout clients.
+    with original OneTwenty clients.
     
     OPTIMIZATION: Tries to identify tenant from subdomain first to avoid 
     iterating through all API keys in the database.
@@ -121,7 +121,7 @@ def get_tenant_from_subdomain(request: Request = None) -> Optional[str]:
     slug = parts[0]
     
     # Ignore common prefixes if needed, but 'slug' should be unique
-    if slug in ["www", "api", "app", "nightscout-saas"]:
+    if slug in ["www", "api", "app", "OneTwenty-saas"]:
         return None
 
     conn = get_db_connection()

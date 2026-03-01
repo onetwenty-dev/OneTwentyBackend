@@ -4,7 +4,7 @@
 
 OneTwenty is a multi-tenant cloud-based SaaS solution that provides a unified interface for continuous glucose monitoring (CGM) data management across all major CGM brands. The platform addresses the fragmented experience Type 1 diabetics face with proprietary apps, limited sharing capabilities, and irregular features of different CGM brands.
 
-Built from scratch (not a fork), the platform follows the Nightscout API protocol for compatibility while introducing multi-tenant architecture, AI-powered analysis, hardware integrations, and comprehensive sharing features for patients, families, and healthcare providers.
+Built from scratch (not a fork), the platform follows the OneTwenty API protocol for compatibility while introducing multi-tenant architecture, AI-powered analysis, hardware integrations, and comprehensive sharing features for patients, families, and healthcare providers.
 
 ## Glossary
 
@@ -16,7 +16,7 @@ Built from scratch (not a fork), the platform follows the Nightscout API protoco
 - **Tenant**: An isolated data space for a patient and their authorized users
 - **Uploader**: A service component that retrieves CGM data from device manufacturers and pushes to our server/DB
 - **Treatment**: A logged event such as insulin dose, carbohydrate intake, or exercise
-- **Nightscout_API**: The API protocol used by the open-source Nightscout project
+- **OneTwenty_API**: The API protocol used by the open-source OneTwenty project
 - **Real_Time_Sync**: Data synchronization occurring at 1-3 minute intervals
 - **Widget**: A persistent UI component displaying glucose data on device home screens
 - **Desk Clock**: Custom hardware device displaying real-time glucose readings
@@ -35,7 +35,7 @@ Built from scratch (not a fork), the platform follows the Nightscout API protoco
 3. THE Uploader SHALL retrieve new glucose readings at intervals specified by the manufacturer's API limits
 4. WHEN new CGM data is received, THE Platform SHALL store it in the patient's tenant with timestamps
 5. IF an uploader fails to retrieve data, THEN THE Platform SHALL log the error and retry with exponential backoff
-6. THE Platform SHALL follow the Nightscout API protocol for CGM data storage and retrieval
+6. THE Platform SHALL follow the OneTwenty API protocol for CGM data storage and retrieval
 
 ### Requirement 2: Treatment Logging via PWA
 
@@ -202,7 +202,7 @@ Built from scratch (not a fork), the platform follows the Nightscout API protoco
 #### Acceptance Criteria
 
 1. THE Platform SHALL support exporting glucose data in CSV format
-2. THE Platform SHALL support exporting glucose data in JSON format compatible with Nightscout
+2. THE Platform SHALL support exporting glucose data in JSON format compatible with OneTwenty
 3. THE Platform SHALL support exporting glucose data in PDF format with graphs and statistics
 4. WHEN a patient requests an export, THE Platform SHALL generate the file within 60 seconds
 5. THE Platform SHALL include all glucose readings, treatments, and notes in the export
@@ -214,7 +214,7 @@ Built from scratch (not a fork), the platform follows the Nightscout API protoco
 
 #### Acceptance Criteria
 
-1. THE Platform SHALL provide a public API following the Nightscout API protocol
+1. THE Platform SHALL provide a public API following the OneTwenty API protocol
 2. WHEN a patient enables API access, THE Platform SHALL provision a custom subdomain (e.g., patientslug.platform.com)
 3. THE Platform SHALL generate API secrets (tokens) for authenticating API requests
 4. THE Platform SHALL allow patients to create multiple API secrets with different permission scopes

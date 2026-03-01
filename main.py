@@ -36,6 +36,6 @@ async def shutdown_db_client():
 
 @app.get("/")
 def root():
-    return {"message": "Welcome to Nightscout SaaS API"}
+    return {"message": "Welcome to OneTwenty SaaS API"}
 
 app.include_router(api_router, prefix=settings.API_V1_STR)

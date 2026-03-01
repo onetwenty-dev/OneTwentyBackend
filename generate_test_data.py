@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Generate realistic CGM test data and upload to Nightscout backend
+Generate realistic CGM test data and upload to OneTwenty backend
 """
 
 import json

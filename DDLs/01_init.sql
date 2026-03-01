@@ -1,4 +1,4 @@
--- DDL for Nightscout SaaS
+-- DDL for OneTwenty SaaS
 -- Execute this in your database tool (e.g., DBeaver)
 
 CREATE TABLE IF NOT EXISTS tenants (

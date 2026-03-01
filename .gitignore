@@ -7,7 +7,7 @@ ENV/
 .env
 secrets.json
 
-nightscout-key.pem
+OneTwenty-key.pem
 *.pem
 
 cgm-remote-monitor/

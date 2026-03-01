@@ -1,5 +1,5 @@
 <<<<<<< HEAD
-# Nightscout SaaS Backend (Python)
+# OneTwenty SaaS Backend (Python)
 
 This is the new multi-tenant backend built with FastAPI.
 
@@ -88,9 +88,9 @@ OneTwenty unifies glucose data from **all CGM brands** into a single multi-tenan
 Built with **Vite + Vanilla JS** for a lightweight, installable PWA.
 - **Real-time glucose chart** — D3.js-powered graphs with trend arrows (`src/enhanced-chart.js`, `src/simple-chart.js`)
 - **WebSocket live sync** — instant updates from backend (`src/websocket.js`)
-- **Nightscout-compatible UI** — full renderer, care portal, bolus calculator (`src/nightscout/`)
+- **OneTwenty-compatible UI** — full renderer, care portal, bolus calculator (`src/OneTwenty/`)
 - **AI treatment logging** — natural language input: *"Had 2 rotis, took 4 units, walked 3 km"*
-- Profile management, settings, and subdomain-based auth (`src/profile.js`, `src/nightscout/hashauth.js`)
+- Profile management, settings, and subdomain-based auth (`src/profile.js`, `src/OneTwenty/hashauth.js`)
 
 ### 🖥️ Backend (`backend_python/`)
 Layered **FastAPI** architecture with clean separation of concerns:

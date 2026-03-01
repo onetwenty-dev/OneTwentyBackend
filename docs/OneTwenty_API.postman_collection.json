@@ -2,37 +2,74 @@
   "info": {
     "name": "OneTwenty — Python Backend API",
     "_postman_id": "onetwo-python-backend-v1",
-    "description": "All HTTP API endpoints for the OneTwenty multi-tenant Nightscout backend.\n\nBase URL: https://{{slug}}.onetwenty.dev/api/v1\n\nVariables:\n  base_url   = https://onetwenty.dev\n  slug       = ayush  (your tenant slug)\n  access_token  = <JWT access token from /auth/login>\n  api_secret_hash = <SHA-1 hash of your API secret>",
+    "description": "All HTTP API endpoints for the OneTwenty multi-tenant OneTwenty backend.\n\nBase URL: https://{{slug}}.onetwenty.dev/api/v1\n\nVariables:\n  base_url   = https://onetwenty.dev\n  slug       = ayush  (your tenant slug)\n  access_token  = <JWT access token from /auth/login>\n  api_secret_hash = <SHA-1 hash of your API secret>",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
-    { "key": "base_url",          "value": "https://onetwenty.dev",           "type": "string" },
-    { "key": "slug",              "value": "ayush",                           "type": "string" },
-    { "key": "access_token",      "value": "",                                "type": "string" },
-    { "key": "refresh_token",     "value": "",                                "type": "string" },
-    { "key": "api_secret_hash",   "value": "",                                "type": "string" }
+    {
+      "key": "base_url",
+      "value": "https://onetwenty.dev",
+      "type": "string"
+    },
+    {
+      "key": "slug",
+      "value": "ayush",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refresh_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "api_secret_hash",
+      "value": "",
+      "type": "string"
+    }
   ],
   "item": [
-
     {
       "name": "Auth",
       "item": [
-
         {
           "name": "Signup",
           "request": {
             "method": "POST",
-            "url": { "raw": "{{base_url}}/api/v1/auth/signup", "host": ["{{base_url}}"], "path": ["api","v1","auth","signup"] },
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/signup",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "signup"
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"securepass123\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "description": "Register a new user account. Returns user_id on success."
           }
         },
-
         {
           "name": "Login",
           "event": [
@@ -50,17 +87,36 @@
           ],
           "request": {
             "method": "POST",
-            "url": { "raw": "{{base_url}}/api/v1/auth/login", "host": ["{{base_url}}"], "path": ["api","v1","auth","login"] },
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "login"
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"user_id\": \"user@example.com\",\n  \"password\": \"securepass123\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "description": "Authenticate and receive JWT access + refresh tokens.\n\nThe test script auto-saves access_token and refresh_token to collection variables."
           }
         },
-
         {
           "name": "Refresh Token",
           "event": [
@@ -79,14 +135,25 @@
             "method": "POST",
             "url": {
               "raw": "{{base_url}}/api/v1/auth/refresh-token?refresh_token={{refresh_token}}",
-              "host": ["{{base_url}}"],
-              "path": ["api","v1","auth","refresh-token"],
-              "query": [{ "key": "refresh_token", "value": "{{refresh_token}}" }]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "refresh-token"
+              ],
+              "query": [
+                {
+                  "key": "refresh_token",
+                  "value": "{{refresh_token}}"
+                }
+              ]
             },
             "description": "Exchange a refresh token for a new access token."
           }
         },
-
         {
           "name": "Get / Create API Secret",
           "event": [
@@ -103,423 +170,869 @@
           ],
           "request": {
             "method": "POST",
-            "url": { "raw": "{{base_url}}/api/v1/auth/api-secret", "host": ["{{base_url}}"], "path": ["api","v1","auth","api-secret"] },
-            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/api-secret",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "api-secret"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
             "description": "Get the existing API secret for the user's tenant, or create one if none exists. Requires JWT."
           }
         },
-
         {
           "name": "Reset API Secret",
           "request": {
             "method": "POST",
-            "url": { "raw": "{{base_url}}/api/v1/auth/reset-api-secret", "host": ["{{base_url}}"], "path": ["api","v1","auth","reset-api-secret"] },
-            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/reset-api-secret",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "reset-api-secret"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
             "description": "Revoke the current API secret and generate a new one. ⚠️ All uploaders using the old secret will break."
           }
         },
-
         {
           "name": "Get Profile",
           "request": {
             "method": "GET",
-            "url": { "raw": "{{base_url}}/api/v1/auth/profile", "host": ["{{base_url}}"], "path": ["api","v1","auth","profile"] },
-            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/profile",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "profile"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
             "description": "Get current user's profile including tenant info and subdomain URL."
           }
         }
-
       ]
     },
-
     {
       "name": "Status & Settings",
       "item": [
-
         {
           "name": "Status — Subdomain (public)",
           "request": {
             "method": "GET",
-            "url": { "raw": "https://{{slug}}.onetwenty.dev/api/v1/status", "host": ["https://{{slug}}.onetwenty.dev"], "path": ["api","v1","status"] },
+            "url": {
+              "raw": "https://{{slug}}.onetwenty.dev/api/v1/status",
+              "host": [
+                "https://{{slug}}.onetwenty.dev"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "status"
+              ]
+            },
             "description": "Fetch server status and tenant configuration. No auth needed — tenant resolved from subdomain."
           }
         },
-
         {
           "name": "Status — API Secret",
           "request": {
             "method": "GET",
-            "url": { "raw": "https://{{slug}}.onetwenty.dev/api/v1/status", "host": ["https://{{slug}}.onetwenty.dev"], "path": ["api","v1","status"] },
-            "header": [{ "key": "api-secret", "value": "{{api_secret_hash}}" }],
+            "url": {
+              "raw": "https://{{slug}}.onetwenty.dev/api/v1/status",
+              "host": [
+                "https://{{slug}}.onetwenty.dev"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "status"
+              ]
+            },
+            "header": [
+              {
+                "key": "api-secret",
+                "value": "{{api_secret_hash}}"
+              }
+            ],
             "description": "Fetch status authenticated via API secret header."
           }
         },
-
         {
           "name": "Status — JWT",
           "request": {
             "method": "GET",
-            "url": { "raw": "https://{{slug}}.onetwenty.dev/api/v1/status", "host": ["https://{{slug}}.onetwenty.dev"], "path": ["api","v1","status"] },
-            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": {
+              "raw": "https://{{slug}}.onetwenty.dev/api/v1/status",
+              "host": [
+                "https://{{slug}}.onetwenty.dev"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "status"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
             "description": "Fetch status authenticated via JWT Bearer token."
           }
         },
-
         {
           "name": "Status (.json extension)",
           "request": {
             "method": "GET",
-            "url": { "raw": "https://{{slug}}.onetwenty.dev/api/v1/status.json", "host": ["https://{{slug}}.onetwenty.dev"], "path": ["api","v1","status.json"] }
+            "url": {
+              "raw": "https://{{slug}}.onetwenty.dev/api/v1/status.json",
+              "host": [
+                "https://{{slug}}.onetwenty.dev"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "status.json"
+              ]
+            }
           }
         },
-
         {
           "name": "Update Settings",
           "request": {
             "method": "PUT",
-            "url": { "raw": "{{base_url}}/api/v1/settings", "host": ["{{base_url}}"], "path": ["api","v1","settings"] },
+            "url": {
+              "raw": "{{base_url}}/api/v1/settings",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "settings"
+              ]
+            },
             "header": [
-              { "key": "Authorization", "value": "Bearer {{access_token}}" },
-              { "key": "Content-Type",   "value": "application/json" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"units\": \"mmol\",\n  \"alarm_high\": 200,\n  \"alarm_low\": 65,\n  \"title\": \"My CGM\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "description": "Update tenant settings. Accepts partial updates — only provided fields are merged."
           }
         }
-
       ]
     },
-
     {
       "name": "Entries (CGM Data)",
       "item": [
-
         {
           "name": "GET Entries — Latest 10 (subdomain)",
           "request": {
             "method": "GET",
-            "url": { "raw": "https://{{slug}}.onetwenty.dev/api/v1/entries", "host": ["https://{{slug}}.onetwenty.dev"], "path": ["api","v1","entries"] },
+            "url": {
+              "raw": "https://{{slug}}.onetwenty.dev/api/v1/entries",
+              "host": [
+                "https://{{slug}}.onetwenty.dev"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "entries"
+              ]
+            },
             "description": "Fetch the latest 10 entries. Tenant resolved from subdomain — no auth header needed."
           }
         },
-
         {
           "name": "GET Entries — count=50",
           "request": {
             "method": "GET",
             "url": {
               "raw": "https://{{slug}}.onetwenty.dev/api/v1/entries?count=50",
-              "host": ["https://{{slug}}.onetwenty.dev"],
-              "path": ["api","v1","entries"],
-              "query": [{ "key": "count", "value": "50" }]
+              "host": [
+                "https://{{slug}}.onetwenty.dev"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "entries"
+              ],
+              "query": [
+                {
+                  "key": "count",
+                  "value": "50"
+                }
+              ]
             }
           }
         },
-
         {
           "name": "GET Entries — Last 2 hours",
           "request": {
             "method": "GET",
             "url": {
               "raw": "https://{{slug}}.onetwenty.dev/api/v1/entries?hours=2",
-              "host": ["https://{{slug}}.onetwenty.dev"],
-              "path": ["api","v1","entries"],
-              "query": [{ "key": "hours", "value": "2" }]
+              "host": [
+                "https://{{slug}}.onetwenty.dev"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "entries"
+              ],
+              "query": [
+                {
+                  "key": "hours",
+                  "value": "2"
+                }
+              ]
             }
           }
         },
-
         {
           "name": "GET Entries — Last 24 hours",
           "request": {
             "method": "GET",
             "url": {
               "raw": "https://{{slug}}.onetwenty.dev/api/v1/entries?hours=24",
-              "host": ["https://{{slug}}.onetwenty.dev"],
-              "path": ["api","v1","entries"],
-              "query": [{ "key": "hours", "value": "24" }]
+              "host": [
+                "https://{{slug}}.onetwenty.dev"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "entries"
+              ],
+              "query": [
+                {
+                  "key": "hours",
+                  "value": "24"
+                }
+              ]
             }
           }
         },
-
         {
           "name": "GET Entries — ISO timestamp range",
           "request": {
             "method": "GET",
             "url": {
               "raw": "https://{{slug}}.onetwenty.dev/api/v1/entries?start=2025-08-27T00:00:00Z&end=2025-08-27T23:59:59Z",
-              "host": ["https://{{slug}}.onetwenty.dev"],
-              "path": ["api","v1","entries"],
+              "host": [
+                "https://{{slug}}.onetwenty.dev"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "entries"
+              ],
               "query": [
-                { "key": "start", "value": "2025-08-27T00:00:00Z" },
-                { "key": "end",   "value": "2025-08-27T23:59:59Z" }
+                {
+                  "key": "start",
+                  "value": "2025-08-27T00:00:00Z"
+                },
+                {
+                  "key": "end",
+                  "value": "2025-08-27T23:59:59Z"
+                }
               ]
             }
           }
         },
-
         {
           "name": "GET Entries — Unix ms range",
           "request": {
             "method": "GET",
             "url": {
               "raw": "https://{{slug}}.onetwenty.dev/api/v1/entries?start=1756339200000&end=1756425600000",
-              "host": ["https://{{slug}}.onetwenty.dev"],
-              "path": ["api","v1","entries"],
+              "host": [
+                "https://{{slug}}.onetwenty.dev"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "entries"
+              ],
               "query": [
-                { "key": "start", "value": "1756339200000" },
-                { "key": "end",   "value": "1756425600000" }
+                {
+                  "key": "start",
+                  "value": "1756339200000"
+                },
+                {
+                  "key": "end",
+                  "value": "1756425600000"
+                }
               ]
             }
           }
         },
-
         {
           "name": "GET Entries — API Secret",
           "request": {
             "method": "GET",
-            "url": { "raw": "https://{{slug}}.onetwenty.dev/api/v1/entries", "host": ["https://{{slug}}.onetwenty.dev"], "path": ["api","v1","entries"] },
-            "header": [{ "key": "api-secret", "value": "{{api_secret_hash}}" }]
+            "url": {
+              "raw": "https://{{slug}}.onetwenty.dev/api/v1/entries",
+              "host": [
+                "https://{{slug}}.onetwenty.dev"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "entries"
+              ]
+            },
+            "header": [
+              {
+                "key": "api-secret",
+                "value": "{{api_secret_hash}}"
+              }
+            ]
           }
         },
-
         {
           "name": "GET Entries — JWT",
           "request": {
             "method": "GET",
-            "url": { "raw": "https://{{slug}}.onetwenty.dev/api/v1/entries", "host": ["https://{{slug}}.onetwenty.dev"], "path": ["api","v1","entries"] },
-            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }]
+            "url": {
+              "raw": "https://{{slug}}.onetwenty.dev/api/v1/entries",
+              "host": [
+                "https://{{slug}}.onetwenty.dev"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "entries"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
           }
         },
-
         {
           "name": "GET Entries — find[sgv][$gte]=120",
           "request": {
             "method": "GET",
             "url": {
               "raw": "https://{{slug}}.onetwenty.dev/api/v1/entries?find[sgv][$gte]=120",
-              "host": ["https://{{slug}}.onetwenty.dev"],
-              "path": ["api","v1","entries"],
-              "query": [{ "key": "find[sgv][$gte]", "value": "120" }]
+              "host": [
+                "https://{{slug}}.onetwenty.dev"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "entries"
+              ],
+              "query": [
+                {
+                  "key": "find[sgv][$gte]",
+                  "value": "120"
+                }
+              ]
             },
-            "description": "Nightscout find[] query syntax. Filters entries where sgv ≥ 120."
+            "description": "OneTwenty find[] query syntax. Filters entries where sgv ≥ 120."
           }
         },
-
         {
           "name": "GET Entries — find[type]=mbg",
           "request": {
             "method": "GET",
             "url": {
               "raw": "https://{{slug}}.onetwenty.dev/api/v1/entries?find[type]=mbg",
-              "host": ["https://{{slug}}.onetwenty.dev"],
-              "path": ["api","v1","entries"],
-              "query": [{ "key": "find[type]", "value": "mbg" }]
+              "host": [
+                "https://{{slug}}.onetwenty.dev"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "entries"
+              ],
+              "query": [
+                {
+                  "key": "find[type]",
+                  "value": "mbg"
+                }
+              ]
             },
             "description": "Filter entries by type (mbg = manual blood glucose)."
           }
         },
-
         {
           "name": "GET Entries/current — plain (subdomain)",
           "request": {
             "method": "GET",
-            "url": { "raw": "https://{{slug}}.onetwenty.dev/api/v1/entries/current", "host": ["https://{{slug}}.onetwenty.dev"], "path": ["api","v1","entries","current"] },
+            "url": {
+              "raw": "https://{{slug}}.onetwenty.dev/api/v1/entries/current",
+              "host": [
+                "https://{{slug}}.onetwenty.dev"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "entries",
+                "current"
+              ]
+            },
             "description": "Latest SGV entry. Returns JSON array by default."
           }
         },
-
         {
           "name": "GET Entries/current — TSV (Accept: text/plain)",
           "request": {
             "method": "GET",
-            "url": { "raw": "https://{{slug}}.onetwenty.dev/api/v1/entries/current", "host": ["https://{{slug}}.onetwenty.dev"], "path": ["api","v1","entries","current"] },
-            "header": [{ "key": "Accept", "value": "text/plain" }],
+            "url": {
+              "raw": "https://{{slug}}.onetwenty.dev/api/v1/entries/current",
+              "host": [
+                "https://{{slug}}.onetwenty.dev"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "entries",
+                "current"
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "text/plain"
+              }
+            ],
             "description": "Latest SGV entry in TSV format: dateString\\tdate\\tsgv\\tdirection\\tdevice"
           }
         },
-
         {
           "name": "GET Entries/current — (.json extension)",
           "request": {
             "method": "GET",
-            "url": { "raw": "https://{{slug}}.onetwenty.dev/api/v1/entries/current.json", "host": ["https://{{slug}}.onetwenty.dev"], "path": ["api","v1","entries","current.json"] }
+            "url": {
+              "raw": "https://{{slug}}.onetwenty.dev/api/v1/entries/current.json",
+              "host": [
+                "https://{{slug}}.onetwenty.dev"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "entries",
+                "current.json"
+              ]
+            }
           }
         },
-
         {
           "name": "GET Entries/current — API Secret",
           "request": {
             "method": "GET",
-            "url": { "raw": "https://{{slug}}.onetwenty.dev/api/v1/entries/current", "host": ["https://{{slug}}.onetwenty.dev"], "path": ["api","v1","entries","current"] },
-            "header": [{ "key": "api-secret", "value": "{{api_secret_hash}}" }]
+            "url": {
+              "raw": "https://{{slug}}.onetwenty.dev/api/v1/entries/current",
+              "host": [
+                "https://{{slug}}.onetwenty.dev"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "entries",
+                "current"
+              ]
+            },
+            "header": [
+              {
+                "key": "api-secret",
+                "value": "{{api_secret_hash}}"
+              }
+            ]
           }
         },
-
         {
           "name": "GET Entries/{spec} — by ObjectId",
           "request": {
             "method": "GET",
-            "url": { "raw": "https://{{slug}}.onetwenty.dev/api/v1/entries/65cf81bc436037528ec75fa5", "host": ["https://{{slug}}.onetwenty.dev"], "path": ["api","v1","entries","65cf81bc436037528ec75fa5"] },
+            "url": {
+              "raw": "https://{{slug}}.onetwenty.dev/api/v1/entries/65cf81bc436037528ec75fa5",
+              "host": [
+                "https://{{slug}}.onetwenty.dev"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "entries",
+                "65cf81bc436037528ec75fa5"
+              ]
+            },
             "description": "Fetch a single entry by its MongoDB ObjectId. Replace the ID in the URL."
           }
         },
-
         {
           "name": "GET Entries/{spec} — by type",
           "request": {
             "method": "GET",
-            "url": { "raw": "https://{{slug}}.onetwenty.dev/api/v1/entries/sgv", "host": ["https://{{slug}}.onetwenty.dev"], "path": ["api","v1","entries","sgv"] },
+            "url": {
+              "raw": "https://{{slug}}.onetwenty.dev/api/v1/entries/sgv",
+              "host": [
+                "https://{{slug}}.onetwenty.dev"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "entries",
+                "sgv"
+              ]
+            },
             "description": "Filter entries by type. Try: sgv, mbg, cal."
           }
         },
-
         {
           "name": "POST Entries — single SGV",
           "request": {
             "method": "POST",
-            "url": { "raw": "https://{{slug}}.onetwenty.dev/api/v1/entries", "host": ["https://{{slug}}.onetwenty.dev"], "path": ["api","v1","entries"] },
+            "url": {
+              "raw": "https://{{slug}}.onetwenty.dev/api/v1/entries",
+              "host": [
+                "https://{{slug}}.onetwenty.dev"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "entries"
+              ]
+            },
             "header": [
-              { "key": "api-secret",    "value": "{{api_secret_hash}}" },
-              { "key": "Content-Type",  "value": "application/json" }
+              {
+                "key": "api-secret",
+                "value": "{{api_secret_hash}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"type\": \"sgv\",\n  \"dateString\": \"2025-08-27T12:00:00.000Z\",\n  \"date\": 1756339200000,\n  \"sgv\": 120,\n  \"direction\": \"Flat\",\n  \"device\": \"xDrip-LibreLink\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "description": "Upload a single CGM entry. Upserts by (sysTime, type) — safe to retry."
           }
         },
-
         {
           "name": "POST Entries — batch",
           "request": {
             "method": "POST",
-            "url": { "raw": "https://{{slug}}.onetwenty.dev/api/v1/entries", "host": ["https://{{slug}}.onetwenty.dev"], "path": ["api","v1","entries"] },
+            "url": {
+              "raw": "https://{{slug}}.onetwenty.dev/api/v1/entries",
+              "host": [
+                "https://{{slug}}.onetwenty.dev"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "entries"
+              ]
+            },
             "header": [
-              { "key": "api-secret",    "value": "{{api_secret_hash}}" },
-              { "key": "Content-Type",  "value": "application/json" }
+              {
+                "key": "api-secret",
+                "value": "{{api_secret_hash}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "[\n  {\n    \"type\": \"sgv\",\n    \"dateString\": \"2025-08-27T12:00:00.000Z\",\n    \"date\": 1756339200000,\n    \"sgv\": 120,\n    \"direction\": \"Flat\"\n  },\n  {\n    \"type\": \"sgv\",\n    \"dateString\": \"2025-08-27T12:05:00.000Z\",\n    \"date\": 1756339500000,\n    \"sgv\": 125,\n    \"direction\": \"FortyFiveUp\"\n  }\n]",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "description": "Upload multiple CGM entries in one request."
           }
         },
-
         {
           "name": "POST Entries (.json extension)",
           "request": {
             "method": "POST",
-            "url": { "raw": "https://{{slug}}.onetwenty.dev/api/v1/entries.json", "host": ["https://{{slug}}.onetwenty.dev"], "path": ["api","v1","entries.json"] },
+            "url": {
+              "raw": "https://{{slug}}.onetwenty.dev/api/v1/entries.json",
+              "host": [
+                "https://{{slug}}.onetwenty.dev"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "entries.json"
+              ]
+            },
             "header": [
-              { "key": "api-secret",    "value": "{{api_secret_hash}}" },
-              { "key": "Content-Type",  "value": "application/json" }
+              {
+                "key": "api-secret",
+                "value": "{{api_secret_hash}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "[{\"type\":\"sgv\",\"dateString\":\"2025-08-27T12:00:00.000Z\",\"date\":1756339200000,\"sgv\":120,\"direction\":\"Flat\"}]",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
           }
         },
-
         {
           "name": "DELETE Entries/{spec} — by ObjectId",
           "request": {
             "method": "DELETE",
-            "url": { "raw": "https://{{slug}}.onetwenty.dev/api/v1/entries/65cf81bc436037528ec75fa5", "host": ["https://{{slug}}.onetwenty.dev"], "path": ["api","v1","entries","65cf81bc436037528ec75fa5"] },
-            "header": [{ "key": "api-secret", "value": "{{api_secret_hash}}" }],
+            "url": {
+              "raw": "https://{{slug}}.onetwenty.dev/api/v1/entries/65cf81bc436037528ec75fa5",
+              "host": [
+                "https://{{slug}}.onetwenty.dev"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "entries",
+                "65cf81bc436037528ec75fa5"
+              ]
+            },
+            "header": [
+              {
+                "key": "api-secret",
+                "value": "{{api_secret_hash}}"
+              }
+            ],
             "description": "Delete a single entry by its ObjectId."
           }
         },
-
         {
           "name": "DELETE Entries/{spec} — by type",
           "request": {
             "method": "DELETE",
-            "url": { "raw": "https://{{slug}}.onetwenty.dev/api/v1/entries/sgv", "host": ["https://{{slug}}.onetwenty.dev"], "path": ["api","v1","entries","sgv"] },
-            "header": [{ "key": "api-secret", "value": "{{api_secret_hash}}" }],
+            "url": {
+              "raw": "https://{{slug}}.onetwenty.dev/api/v1/entries/sgv",
+              "host": [
+                "https://{{slug}}.onetwenty.dev"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "entries",
+                "sgv"
+              ]
+            },
+            "header": [
+              {
+                "key": "api-secret",
+                "value": "{{api_secret_hash}}"
+              }
+            ],
             "description": "Delete all entries of a specific type (sgv, mbg, cal, etc.)."
           }
         },
-
         {
           "name": "DELETE Entries — by find[] query",
           "request": {
             "method": "DELETE",
             "url": {
               "raw": "https://{{slug}}.onetwenty.dev/api/v1/entries?find[date][$lte]=1756339200000",
-              "host": ["https://{{slug}}.onetwenty.dev"],
-              "path": ["api","v1","entries"],
-              "query": [{ "key": "find[date][$lte]", "value": "1756339200000" }]
+              "host": [
+                "https://{{slug}}.onetwenty.dev"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "entries"
+              ],
+              "query": [
+                {
+                  "key": "find[date][$lte]",
+                  "value": "1756339200000"
+                }
+              ]
             },
-            "header": [{ "key": "api-secret", "value": "{{api_secret_hash}}" }],
+            "header": [
+              {
+                "key": "api-secret",
+                "value": "{{api_secret_hash}}"
+              }
+            ],
             "description": "Delete all entries matching a find[] filter. Example: delete entries older than a timestamp."
           }
         }
-
       ]
     },
-
     {
       "name": "Doctors (RBAC)",
       "item": [
-
         {
           "name": "Assign Patient",
           "request": {
             "method": "POST",
             "url": {
               "raw": "{{base_url}}/api/v1/doctors/assign-patient?patient_email=patient@example.com",
-              "host": ["{{base_url}}"],
-              "path": ["api","v1","doctors","assign-patient"],
-              "query": [{ "key": "patient_email", "value": "patient@example.com" }]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "doctors",
+                "assign-patient"
+              ],
+              "query": [
+                {
+                  "key": "patient_email",
+                  "value": "patient@example.com"
+                }
+              ]
             },
-            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
             "description": "Doctor assigns a patient by their email. Requires doctor role."
           }
         },
-
         {
           "name": "My Patients",
           "request": {
             "method": "GET",
-            "url": { "raw": "{{base_url}}/api/v1/doctors/my-patients", "host": ["{{base_url}}"], "path": ["api","v1","doctors","my-patients"] },
-            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/api/v1/doctors/my-patients",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "doctors",
+                "my-patients"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
             "description": "Doctor lists all their assigned patients."
           }
         },
-
         {
           "name": "My Doctors",
           "request": {
             "method": "GET",
-            "url": { "raw": "{{base_url}}/api/v1/doctors/my-doctors", "host": ["{{base_url}}"], "path": ["api","v1","doctors","my-doctors"] },
-            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/api/v1/doctors/my-doctors",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "doctors",
+                "my-doctors"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
             "description": "Patient lists all doctors who have access to their data."
           }
         },
-
         {
           "name": "Revoke Doctor Access",
           "request": {
             "method": "DELETE",
-            "url": { "raw": "{{base_url}}/api/v1/doctors/revoke/7", "host": ["{{base_url}}"], "path": ["api","v1","doctors","revoke","7"] },
-            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/api/v1/doctors/revoke/7",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "doctors",
+                "revoke",
+                "7"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
             "description": "Patient revokes a doctor's access. Replace 7 with the doctor's user ID."
           }
         }
-
       ]
     }
-
   ]
 }

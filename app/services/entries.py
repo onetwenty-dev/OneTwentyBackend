@@ -6,7 +6,7 @@ from app.schemas.entry import EntryCreate
 
 def _normalize_entry(doc: dict) -> dict:
     """
-    Mirrors original Nightscout lib/server/entries.js create() normalization.
+    Mirrors original OneTwenty lib/server/entries.js create() normalization.
 
     1. Parse dateString (with timezone offset) via fromisoformat, or fall back to date ms.
     2. Compute: utcOffset (minutes), sysTime (UTC ISO), normalize dateString to sysTime.

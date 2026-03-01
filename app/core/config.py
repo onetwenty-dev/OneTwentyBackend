@@ -16,12 +16,12 @@ def load_json_secrets() -> dict:
     return {}
 
 class Settings(BaseSettings):
-    PROJECT_NAME: str = "Nightscout SaaS"
+    PROJECT_NAME: str = "OneTwenty SaaS"
     API_V1_STR: str = "/api/v1"
     
     # Database (to be filled from secrets.json or ENV)
     MONGO_URI: str = ""
-    MONGO_DB: str = "nightscout_saas"
+    MONGO_DB: str = "OneTwenty_saas"
     SQLALCHEMY_DATABASE_URL: str = ""
 
     # Security

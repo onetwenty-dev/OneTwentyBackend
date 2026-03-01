@@ -49,7 +49,7 @@ class UserRepository:
             # 1. Create Tenant with default settings
             cursor.execute(
                 "INSERT INTO tenants (public_id, name, slug, settings) VALUES (%s, %s, %s, %s) RETURNING id",
-                (tenant_public_id, f"{email}'s Nightscout", tenant_public_id.lower(), json.dumps(DEFAULT_TENANT_SETTINGS)) 
+                (tenant_public_id, f"{email}'s OneTwenty", tenant_public_id.lower(), json.dumps(DEFAULT_TENANT_SETTINGS)) 
             )
             tenant_id = cursor.fetchone()[0]
 

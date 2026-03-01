@@ -1,5 +1,5 @@
 """
-Nightscout-compatible Entries API endpoints.
+OneTwenty-compatible Entries API endpoints.
 
 GET  /entries              — list entries (count, hours, start/end, find[] query)
 GET  /entries/current      — latest SGV entry (JSON or TSV via Accept header)
@@ -38,7 +38,7 @@ _ID_RE = re.compile(r"^[a-f\d]{24}$", re.IGNORECASE)
 
 async def _resolve_tenant(request: Request, api_secret: Optional[str]) -> str:
     """
-    Multi-strategy auth resolution (mirrors original Nightscout):
+    Multi-strategy auth resolution (mirrors original OneTwenty):
     1. api-secret header
     2. Authorization: Bearer <jwt>
     3. Host subdomain
@@ -89,7 +89,7 @@ def _last_modified_header(entries: List[Dict]) -> Optional[str]:
 def _check_not_modified(request: Request, last_modified_str: Optional[str]) -> bool:
     """
     Return True if the client's If-Modified-Since means we should send 304.
-    Mirrors original Nightscout ifModifiedSinceCTX behavior.
+    Mirrors original OneTwenty ifModifiedSinceCTX behavior.
     """
     if not last_modified_str:
         return False
@@ -173,7 +173,7 @@ async def create_entries(
     Upload CGM entries.
     - Normalizes dates (sysTime, utcOffset, dateString) on write.
     - Upserts by (sysTime, type, tenant_id) — safe for retried/duplicate uploads.
-    - Returns full array of stored documents (matching original Nightscout shape).
+    - Returns full array of stored documents (matching original OneTwenty shape).
     - Broadcasts to WebSocket clients.
     """
     from app.websocket.manager import manager
@@ -200,7 +200,7 @@ async def get_current_entry(
     """
     Latest SGV entry.
 
-    Content negotiation (mirrors original Nightscout):
+    Content negotiation (mirrors original OneTwenty):
     - Accept: application/json (default) → single-element JSON array
     - Accept: text/plain | text/tab-separated-values → TSV line
     """

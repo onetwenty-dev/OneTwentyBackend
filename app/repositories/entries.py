@@ -6,11 +6,11 @@ import re
 
 
 # Fields that should be cast to int when received as strings from query parameters
-# (mirrors original Nightscout lib/server/query.js walker spec for entries)
+# (mirrors original OneTwenty lib/server/query.js walker spec for entries)
 _INT_FIELDS = {"date", "sgv", "filtered", "unfiltered", "rssi", "noise", "mbg"}
 
 # Default time window enforced when no date constraint is present in a find[] query
-# Mirrors original Nightscout: deltaAgo = TWO_DAYS * 2 = 4 days in ms
+# Mirrors original OneTwenty: deltaAgo = TWO_DAYS * 2 = 4 days in ms
 _DEFAULT_DELTA_AGO_MS = 4 * 24 * 60 * 60 * 1000
 
 
@@ -35,7 +35,7 @@ def build_mongo_query(tenant_id: str, find: Optional[Dict] = None, count: int = 
     """
     Translate the parsed `find` dict (from query string) into a MongoDB query dict.
 
-    Mirrors original Nightscout lib/server/query.js `create()`:
+    Mirrors original OneTwenty lib/server/query.js `create()`:
     - Casts numeric fields (date, sgv, filtered, …) to int
     - If no date constraint is present, enforces date >= (now - 4 days)
     - Always scopes to tenant_id
@@ -85,7 +85,7 @@ class EntriesRepository:
         Upserts documents into the 'entries' collection, one at a time.
 
         Deduplication key: { sysTime, type, tenant_id }
-        Mirrors original Nightscout lib/server/entries.js create() upsert logic.
+        Mirrors original OneTwenty lib/server/entries.js create() upsert logic.
         Returns the full list of documents as stored (with _id as string).
         """
         if not documents:
@@ -208,7 +208,7 @@ class EntriesRepository:
     async def ensure_indexes(self) -> None:
         """
         Create indexes on the entries collection if they don't already exist.
-        Mirrors original Nightscout lib/server/entries.js indexedFields.
+        Mirrors original OneTwenty lib/server/entries.js indexedFields.
         Called once at application startup.
 
         NOTE on dedup_key:

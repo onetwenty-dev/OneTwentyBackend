@@ -1,7 +1,7 @@
 """
-Nightscout-compatible /status endpoint.
+OneTwenty-compatible /status endpoint.
 
-Content negotiation mirrors original Nightscout lib/api/status.js res.format():
+Content negotiation mirrors original OneTwenty lib/api/status.js res.format():
   Accept: application/json  (default)  → full JSON status object
   Accept: text/html         / .html    → <h1>STATUS OK</h1>
   Accept: image/png         / .png     → 302 redirect to shields.io badge (PNG)
@@ -27,7 +27,7 @@ from app.repositories.tenant import TenantRepository
 
 router = APIRouter()
 
-_BADGE_BASE = "http://img.shields.io/badge/Nightscout-OK-green"
+_BADGE_BASE = "http://img.shields.io/badge/OneTwenty-OK-green"
 
 
 # ---------------------------------------------------------------------------
@@ -71,13 +71,13 @@ async def _resolve_tenant(request: Request, api_secret: Optional[str]) -> str:
 # ---------------------------------------------------------------------------
 
 def _build_status_info(tenant_info: dict) -> dict:
-    """Build the canonical status dict matching original Nightscout's `info` object."""
+    """Build the canonical status dict matching original OneTwenty's `info` object."""
     now = datetime.now(tz=timezone.utc)
     settings = tenant_info.get("settings", {})
 
     return {
         "status": "ok",
-        "name": tenant_info.get("name", "Nightscout"),
+        "name": tenant_info.get("name", "OneTwenty"),
         "version": "15.0.0-saas",
         "serverTime": now.isoformat(),
         "serverTimeEpoch": int(now.timestamp() * 1000),
@@ -88,7 +88,7 @@ def _build_status_info(tenant_info: dict) -> dict:
         "extendedSettings": {
             "devicestatus": {"advanced": True}
         },
-        # Convenience top-level fields used directly by the Nightscout UI
+        # Convenience top-level fields used directly by the OneTwenty UI
         "units": settings.get("units", "mg/dl"),
         "enable": settings.get("enable", []),
         "thresholds": {

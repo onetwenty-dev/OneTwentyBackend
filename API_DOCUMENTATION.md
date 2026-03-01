@@ -1,4 +1,4 @@
-# Nightscout SaaS API Documentation
+# OneTwenty SaaS API Documentation
 
 **Base URL:** `http://localhost:8000/api/v1`
 
@@ -191,7 +191,7 @@ Fetch recent CGM entries (for dashboard).
 ### 3. Status & Settings
 
 #### `GET /status` or `GET /status.json`
-Get Nightscout configuration for the frontend.
+Get OneTwenty configuration for the frontend.
 
 **Auth:** JWT required
 
@@ -199,7 +199,7 @@ Get Nightscout configuration for the frontend.
 ```json
 {
   "status": "ok",
-  "name": "user@example.com's Nightscout",
+  "name": "user@example.com's OneTwenty",
   "version": "15.0.0-saas",
   "apiEnabled": true,
   "careportalEnabled": true,
@@ -213,7 +213,7 @@ Get Nightscout configuration for the frontend.
     "bg_low": 70
   },
   "settings": {
-    "title": "My Nightscout",
+    "title": "My OneTwenty",
     "units": "mg/dl",
     "theme": "default",
     "language": "en",
@@ -238,7 +238,7 @@ Update tenant settings (partial update supported).
 **Request:**
 ```json
 {
-  "title": "My Custom Nightscout",
+  "title": "My Custom OneTwenty",
   "units": "mmol",
   "alarm_high": 200,
   "enable": ["careportal", "iob", "cob"]
@@ -251,7 +251,7 @@ Update tenant settings (partial update supported).
   "status": "ok",
   "message": "Settings updated successfully",
   "settings": {
-    "title": "My Custom Nightscout",
+    "title": "My Custom OneTwenty",
     "units": "mmol",
     "theme": "default",
     "language": "en",
