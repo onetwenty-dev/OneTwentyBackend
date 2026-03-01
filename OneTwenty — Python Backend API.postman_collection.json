@@ -1467,6 +1467,31 @@
                         },
                         "description": "Generate a PDF report and upload to S3. Returns a pre-signed URL."
                     }
+                },
+                {
+                    "name": "List Reports",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{access_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{local}}/api/v1/reports/",
+                            "host": [
+                                "{{local}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "reports",
+                                ""
+                            ]
+                        },
+                        "description": "List all previously generated reports for the tenant."
+                    }
                 }
             ]
         },

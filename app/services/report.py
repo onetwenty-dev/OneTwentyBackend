@@ -1,6 +1,7 @@
 from typing import List, Dict, Any, Optional
 import datetime
 import pandas as pd
+import numpy as np
 from app.repositories.entries import EntriesRepository
 from app.repositories.event import EventRepository
 
@@ -60,85 +61,135 @@ class ReportService:
         # Initialize metrics
         metrics = {
             "avg_glucose": 0,
-            "tir_percent": 0,
-            "tbr_percent": 0,
-            "tar_percent": 0,
-            "estimated_hba1c": 0,
-            "total_readings": 0
+            "tir": {
+                "vlow": 0, "low": 0, "inRange": 0, "high": 0, "vhigh": 0
+            },
+            "gmi": 0,
+            "cv": 0,
+            "total_readings": 0,
+            "days_covered": 0
         }
+
+        agp_data = {}
+        daily_groups = []
 
         if not df_entries.empty and "sgv" in df_entries.columns:
-            sgvs = df_entries["sgv"].astype(float)
+            # Ensure proper types
+            df_entries["sgv"] = df_entries["sgv"].astype(float)
+            df_entries["date_dt"] = pd.to_datetime(df_entries["date"], unit="ms")
+            
+            sgvs = df_entries["sgv"]
             metrics["avg_glucose"] = round(sgvs.mean(), 1)
             metrics["total_readings"] = len(sgvs)
+            metrics["days_covered"] = (df_entries["date_dt"].max() - df_entries["date_dt"].min()).days + 1
             
-            # TIR Calculation (70-180)
-            metrics["tir_percent"] = round((sgvs.between(70, 180).sum() / len(sgvs)) * 100, 1)
-            metrics["tbr_percent"] = round((sgvs < 70).sum() / len(sgvs) * 100, 1)
-            metrics["tar_percent"] = round((sgvs > 180).sum() / len(sgvs) * 100, 1)
+            # TIR Calculation (5 levels)
+            metrics["tir"] = {
+                "vlow": round((sgvs < 54).sum() / len(sgvs) * 100, 1),
+                "low": round((sgvs.between(54, 69).sum() / len(sgvs)) * 100, 1),
+                "inRange": round((sgvs.between(70, 180).sum() / len(sgvs)) * 100, 1),
+                "high": round((sgvs.between(181, 250).sum() / len(sgvs)) * 100, 1),
+                "vhigh": round((sgvs > 250).sum() / len(sgvs) * 100, 1),
+            }
             
-            # More granular ranges for table
-            metrics["pct_70_140"] = round((sgvs.between(70, 140).sum() / len(sgvs)) * 100, 1)
-            metrics["pct_140_180"] = round((sgvs.between(140.1, 180).sum() / len(sgvs)) * 100, 1)
-            metrics["monthly_std_dev"] = round(sgvs.std(), 1) if len(sgvs) > 1 else 0
+            # GMI = 3.31 + (0.02392 * mean_glucose)
+            metrics["gmi"] = round(3.31 + (0.02392 * metrics["avg_glucose"]), 1)
             
-            # eHbA1c = (Avg + 46.7) / 28.7
+            # CV = (StdDev / Mean) * 100
+            std_dev = sgvs.std() if len(sgvs) > 1 else 0
+            metrics["cv"] = round((std_dev / metrics["avg_glucose"]) * 100, 1) if metrics["avg_glucose"] > 0 else 0
+            
+            # eHbA1c (Traditional formula)
             metrics["estimated_hba1c"] = round((metrics["avg_glucose"] + 46.7) / 28.7, 1)
 
-            # 2. Glucose Patterns (Time of Day)
-            # Create a time-of-day column (0-23)
-            # Assuming 'date' is unix ms
-            df_entries["hour"] = pd.to_datetime(df_entries["date"], unit="ms").dt.hour
+            # --- AGP Percentiles (Hourly) ---
+            df_entries["hour"] = df_entries["date_dt"].dt.hour
+            # Filter non-finite SGVs
+            df_agp = df_entries[np.isfinite(df_entries["sgv"])]
+            hourly_stats = df_agp.groupby("hour")["sgv"].quantile([0.1, 0.25, 0.5, 0.75, 0.9]).unstack()
+            # Ensure all hours 0-23 are present
+            for h in range(24):
+                if h not in hourly_stats.index:
+                    hourly_stats.loc[h] = [0.0] * 5
+            hourly_stats = hourly_stats.sort_index().fillna(0.0)
             
-            patterns = {
-                "morning_spike": round(df_entries[df_entries["hour"].between(8, 10)]["sgv"].astype(float).mean(), 1),
-                "afternoon_dip": round(df_entries[df_entries["hour"].between(14, 16)]["sgv"].astype(float).mean(), 1),
-                "evening_rise": round(df_entries[df_entries["hour"].between(20, 22)]["sgv"].astype(float).mean(), 1)
+            agp_data = {
+                "median": hourly_stats[0.5].tolist(),
+                "p25": hourly_stats[0.25].tolist(),
+                "p75": hourly_stats[0.75].tolist(),
+                "p10": hourly_stats[0.1].tolist(),
+                "p90": hourly_stats[0.9].tolist()
             }
-        else:
-            patterns = {"morning_spike": 0, "afternoon_dip": 0, "evening_rise": 0}
 
-        # 3. Exercise metrics
-        ex_metrics = {
-            "total_sessions": 0,
-            "exercise_types": "None",
-            "avg_duration": 0,
-            "avg_ex_drop": 0
-        }
-        if not df_events.empty and "eventType" in df_events.columns:
-            ex_events = df_events[df_events["eventType"] == "exercise"]
-            ex_metrics["total_sessions"] = len(ex_events)
-            if not ex_events.empty:
-                ex_metrics["avg_duration"] = round(ex_events["duration"].astype(float).mean(), 1)
-                types = ex_events["notes"].dropna().unique()
-                ex_metrics["exercise_types"] = ", ".join([str(t) for t in types[:5]]) if len(types) > 0 else "General Workout"
+            # --- Daily Grouping ---
+            # Group entries by day
+            df_entries["day_str"] = df_entries["date_dt"].dt.strftime("%Y-%m-%d")
+            grouped_entries = df_entries.groupby("day_str")
+            
+            # Group events by day
+            grouped_events = None
+            if not df_events.empty:
+                df_events["date_dt"] = pd.to_datetime(df_events["date"], unit="ms")
+                df_events["day_str"] = df_events["date_dt"].dt.strftime("%Y-%m-%d")
+                grouped_events = df_events.groupby("day_str")
+
+            # Sort days descending
+            days = sorted(df_entries["day_str"].unique(), reverse=True)
+            for day in days:
+                day_entries = grouped_entries.get_group(day).copy()
+                day_entries["minute_of_day"] = (day_entries["date_dt"].dt.hour * 60) + day_entries["date_dt"].dt.minute
                 
-                # Simple logic for avg_ex_drop: average of (glucose at start - glucose at end+1h)
-                # For this, we'd need to match each exercise event with the nearest SGVs.
-                # Keeping it simple/placeholder for now as it's a "wow" metric but expensive to compute perfectly.
-                ex_metrics["avg_ex_drop"] = float(15.0) # type: ignore
+                day_events = pd.DataFrame()
+                if grouped_events is not None and day in grouped_events.groups:
+                    day_events = grouped_events.get_group(day).copy()
+                
+                day_treatments = []
+                day_notes = []
+                
+                if not day_events.empty:
+                    for _, ev in day_events.iterrows():
+                        time_str = ev["date_dt"].strftime("%H:%M")
+                        if ev.get("eventType") in ["Meal Bolus", "Correction Bolus", "Basal"]:
+                            insulin = ev.get("insulin", "")
+                            notes = ev.get("notes", "")
+                            desc = f"{insulin}u {notes}".strip()
+                            day_treatments.append({"time": time_str, "desc": desc or ev.get("eventType")})
+                        else:
+                            day_notes.append({
+                                "time": time_str,
+                                "text": ev.get("notes") or ev.get("eventType"),
+                                "tag": ev.get("eventType", "event").lower()
+                            })
 
-        # 4. Meal metrics
-        meal_metrics = {
-            "meals_logged": 0,
-            "avg_carbs": 0,
-            "common_foods": "None"
-        }
-        if not df_events.empty and "eventType" in df_events.columns:
-            meal_events = df_events[df_events["eventType"] == "carb"]
-            meal_metrics["meals_logged"] = len(meal_events)
-            if not meal_events.empty:
-                meal_metrics["avg_carbs"] = round(meal_events["carbs"].astype(float).mean(), 1)
-                foods = meal_events["notes"].dropna().unique()
-                meal_metrics["common_foods"] = ", ".join([str(f) for f in foods[:5]]) if len(foods) > 0 else "Mixed Meals"
+                day_dt = pd.to_datetime(day)
+                day_sgvs = day_entries["sgv"]
+                
+                daily_info = {
+                    "date": day,
+                    "day_name": day_dt.strftime("%a"),
+                    "date_display": day_dt.strftime("%d %b %Y"),
+                    "avg": round(day_sgvs.mean(), 0),
+                    "tir": {
+                        "vlow": round((day_sgvs < 54).sum() / len(day_sgvs) * 100, 0),
+                        "low": round((day_sgvs.between(54, 69).sum() / len(day_sgvs)) * 100, 0),
+                        "inRange": round((day_sgvs.between(70, 180).sum() / len(day_sgvs)) * 100, 0),
+                        "high": round((day_sgvs.between(181, 250).sum() / len(day_sgvs)) * 100, 0),
+                        "vhigh": round((day_sgvs > 250).sum() / len(day_sgvs) * 100, 0),
+                    },
+                    "min": int(day_sgvs.min()),
+                    "max": int(day_sgvs.max()),
+                    "readings": day_entries.sort_values("date")[["sgv", "minute_of_day"]].rename(columns={"sgv": "v", "minute_of_day": "t"}).to_dict("records"),
+                    "treatments": day_treatments,
+                    "notes": day_notes
+                }
+                daily_groups.append(daily_info)
 
         return {
             "metrics": metrics,
-            "patterns": patterns,
-            "exercise": ex_metrics,
-            "eating": meal_metrics,
+            "agp_data": agp_data,
+            "daily_groups": daily_groups,
             "start_date": datetime.datetime.fromtimestamp(start_ms/1000).strftime("%b %d, %Y"),
             "end_date": datetime.datetime.fromtimestamp(end_ms/1000).strftime("%b %d, %Y"),
             "generation_date": datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M"),
-            "df_entries": df_entries # Pass for chart generation
+            "df_entries": df_entries
         }
