@@ -73,6 +73,16 @@ class TranscribeService:
             audio_format = "pcm"
 
         try:
+            # CRITICAL: On ARM/Linux (EC2 aarch64), the underlying CRT library requires these 
+            # to be present in the OS environment to correctly resolve the streaming path.
+            import os
+            os.environ["AWS_ACCESS_KEY_ID"] = settings.AWS_ACCESS_KEY_ID
+            os.environ["AWS_SECRET_ACCESS_KEY"] = settings.AWS_SECRET_ACCESS_KEY
+            os.environ["AWS_DEFAULT_REGION"] = settings.AWS_REGION
+            os.environ["AWS_EC2_METADATA_DISABLED"] = "true"
+            if hasattr(settings, "AWS_SESSION_TOKEN") and settings.AWS_SESSION_TOKEN:
+                os.environ["AWS_SESSION_TOKEN"] = settings.AWS_SESSION_TOKEN
+
             client = TranscribeStreamingClient(region=settings.AWS_REGION)
             
             stream = await client.start_stream_transcription(
