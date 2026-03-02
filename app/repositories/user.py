@@ -19,7 +19,7 @@ class UserRepository:
         try:
             cursor.execute(
                 """SELECT id, public_id, email, hashed_password, role, tier, is_active,
-                          name, additional_data
+                          name, additional_data, dob
                    FROM users WHERE email = %s""",
                 (email,)
             )
@@ -35,6 +35,7 @@ class UserRepository:
                     "is_active": row[6],
                     "name": row[7],
                     "additional_data": row[8] or {},
+                    "dob": row[9]
                 }
             return None
         finally:
@@ -164,7 +165,7 @@ class UserRepository:
         cursor = conn.cursor()
         try:
             cursor.execute(
-                """SELECT u.name, u.email 
+                """SELECT u.name, u.email, u.dob
                    FROM users u
                    JOIN tenant_users tu ON tu.user_id = u.id
                    WHERE tu.tenant_id = %s AND tu.role = 'owner'
@@ -173,8 +174,47 @@ class UserRepository:
             )
             row = cursor.fetchone()
             if row:
-                return {"name": row[0], "email": row[1]}
+                return {"name": row[0], "email": row[1], "dob": row[2]}
             return None
+        finally:
+            cursor.close()
+            conn.close()
+
+    def update_user_profile(
+        self, 
+        user_id: int, 
+        name: Optional[str] = None, 
+        dob: Optional[Any] = None, 
+        additional_data_updates: Optional[Dict[str, Any]] = None
+    ) -> bool:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        try:
+            updates = []
+            params = []
+            
+            if name is not None:
+                updates.append("name = %s")
+                params.append(name)
+            
+            if dob is not None:
+                updates.append("dob = %s")
+                params.append(dob)
+                
+            if additional_data_updates:
+                # Use jsonb_set or simple concatenation || for updates
+                # For simplicity and to match the plan's "flexible JSONB" approach, we use || 
+                updates.append("additional_data = additional_data || %s::jsonb")
+                params.append(json.dumps(additional_data_updates))
+                
+            if not updates:
+                return False
+                
+            params.append(user_id)
+            query = f"UPDATE users SET {', '.join(updates)} WHERE id = %s"
+            cursor.execute(query, tuple(params))
+            conn.commit()
+            return cursor.rowcount > 0
         finally:
             cursor.close()
             conn.close()

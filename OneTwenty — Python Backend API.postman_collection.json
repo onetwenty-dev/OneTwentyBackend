@@ -257,6 +257,45 @@
                         "description": "Get current user's profile including tenant info and subdomain URL."
                     },
                     "response": []
+                },
+                {
+                    "name": "Update Details",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{access_token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Ayush Sonar\",\n  \"dob\": \"2000-01-01\",\n  \"diabetes_type\": \"type1\",\n  \"insulin_types\": [\"Novolog\", \"Lantus\"],\n  \"additional_data\": {\n    \"units\": \"mg/dl\",\n    \"goals\": [\"stable_bg\"]\n  }\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{local}}/api/v1/auth/details",
+                            "host": [
+                                "{{local}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "auth",
+                                "details"
+                            ]
+                        },
+                        "description": "Update user profile details (onboarding data)."
+                    },
+                    "response": []
                 }
             ]
         },
@@ -1492,6 +1531,38 @@
                         },
                         "description": "List all previously generated reports for the tenant."
                     }
+                },
+                {
+                    "name": "Dashboard",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{access_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{local}}/api/v1/reports/dashboard?range=7d",
+                            "host": [
+                                "{{local}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "reports",
+                                "dashboard"
+                            ],
+                            "query": [
+                                {
+                                    "key": "range",
+                                    "value": "7d"
+                                }
+                            ]
+                        },
+                        "description": "Get dashboard metrics and AGP chart data."
+                    },
+                    "response": []
                 }
             ]
         },

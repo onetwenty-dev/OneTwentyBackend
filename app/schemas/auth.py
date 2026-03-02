@@ -1,5 +1,6 @@
 from pydantic import BaseModel, EmailStr, Field
 from typing import Optional, List, Literal, Any, Dict
+from datetime import date
 
 class UserCreate(BaseModel):
     email: EmailStr
@@ -24,8 +25,17 @@ class UserProfile(BaseModel):
     user_id: str
     email: str
     name: Optional[str]
+    dob: Optional[date] = None
     additional_data: Dict[str, Any]
     tenant_slug: Optional[str]
+
+class UserUpdateDetails(BaseModel):
+    name: Optional[str] = None
+    dob: Optional[date] = None
+    # Any other fields to be updated in additional_data
+    diabetes_type: Optional[str] = None
+    insulin_types: Optional[List[str]] = None
+    additional_data: Optional[Dict[str, Any]] = None
 
 class Token(BaseModel):
     access_token: str

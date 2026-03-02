@@ -88,3 +88,38 @@ async def generate_report(
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"S3 Upload failed: {str(e)}")
+@router.get("/dashboard")
+async def get_dashboard(
+    range: str = Query("7d", regex="^(1d|1w|2w|3w|1m|3m|6m|9m|1y|7d|14d|30d|90d)$"),
+    tenant_id: str = Depends(get_current_tenant_from_api_secret_or_jwt),
+    db = Depends(get_mongo_db)
+):
+    """
+    Returns dashboard data: metrics (TIR, GMI, CV, AVG), AGP chart data, and recent reports.
+    """
+    entries_repo = EntriesRepository()
+    event_repo = EventRepository(db)
+    report_service = ReportService(entries_repo, event_repo)
+    
+    # Map dashboard-specific ranges to service ranges if needed
+    # (The service already handles many of these, but let's be safe)
+    range_map = {
+        "7d": "1w",
+        "14d": "2w",
+        "30d": "1m",
+        "90d": "3m"
+    }
+    effective_range = range_map.get(range, range)
+    
+    # 1. Get Aggregated Data
+    try:
+        data = await report_service.get_report_data(tenant_id, effective_range)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Data aggregation failed: {str(e)}")
+        
+    return {
+        "status": "success",
+        "range": range,
+        "metrics": data["metrics"],
+        "agp": data["agp_data"]
+    }

@@ -13,6 +13,7 @@ class AuthService:
             user_id=user["public_id"],
             email=user["email"],
             name=user.get("name"),
+            dob=user.get("dob"),
             additional_data=user.get("additional_data") or {},
             tenant_slug=tenant_slug,
         )
@@ -82,3 +83,22 @@ class AuthService:
             raise HTTPException(status_code=404, detail="User has no tenant")
         self.user_repo.revoke_api_keys(tenant_id)
         return self.user_repo.create_api_key(tenant_id, description="Rotated Key")
+
+    def update_details(self, user_id: int, details: Any) -> bool:
+        # Extract direct fields
+        name = details.name
+        dob = details.dob
+        
+        # Extract additional_data updates
+        additional_updates = details.additional_data or {}
+        if details.diabetes_type:
+            additional_updates["diabetes_type"] = details.diabetes_type
+        if details.insulin_types:
+            additional_updates["insulin_types"] = details.insulin_types
+            
+        return self.user_repo.update_user_profile(
+            user_id=user_id,
+            name=name,
+            dob=dob,
+            additional_data_updates=additional_updates
+        )

@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from app.schemas.auth import UserCreate, UserLogin, Token
+from app.schemas.auth import UserCreate, UserLogin, Token, UserUpdateDetails
 from app.services.auth import AuthService
 from app.core import security
 from jose import jwt, JWTError
@@ -87,7 +87,7 @@ def get_profile(user_id: int = Depends(get_current_user_id)):
     try:
         with conn.cursor() as cursor:
             cursor.execute(
-                """SELECT u.public_id, u.email, u.name, u.additional_data,
+                """SELECT u.public_id, u.email, u.name, u.dob, u.additional_data,
                           t.slug, t.name as tenant_name
                    FROM users u
                    JOIN tenant_users tu ON tu.user_id = u.id
@@ -104,10 +104,11 @@ def get_profile(user_id: int = Depends(get_current_user_id)):
                 "user_id": row[0],
                 "email": row[1],
                 "name": row[2],
-                "additional_data": row[3] or {},
-                "tenant_slug": row[4],
-                "tenant_name": row[5],
-                "subdomain_url": f"https://{row[4]}.onetwenty.dev",
+                "dob": row[3],
+                "additional_data": row[4] or {},
+                "tenant_slug": row[5],
+                "tenant_name": row[6],
+                "subdomain_url": f"https://{row[5]}.onetwenty.dev",
             }
     finally:
         conn.close()
@@ -124,4 +125,17 @@ def get_api_secret(user_id: int = Depends(get_current_user_id)):
 def reset_api_secret(user_id: int = Depends(get_current_user_id)):
     """Revokes the old API Secret and generates a new one."""
     service = AuthService()
-    return {"api_secret": service.rotate_api_key(user_id)}
+@router.post("/details")
+def update_details(
+    details: UserUpdateDetails, 
+    user_id: int = Depends(get_current_user_id)
+):
+    """
+    Onboarding/Profile Update API.
+    Captures dob, name, diabetes_type, insulin_types, and any other additional_data.
+    """
+    service = AuthService()
+    success = service.update_details(user_id, details)
+    if not success:
+        raise HTTPException(status_code=400, detail="Update failed")
+    return {"status": "success", "message": "Profile updated"}

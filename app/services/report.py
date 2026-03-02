@@ -159,9 +159,9 @@ class ReportService:
                         # Minute of day for SVG positioning (0-1439)
                         mod = (ev["date_dt"].hour * 60) + ev["date_dt"].minute
                         
-                        e_type = ev.get("eventType")
+                        e_type = str(ev.get("eventType") or "")
                         insulin = ev.get("insulin")
-                        notes = ev.get("notes") or ""
+                        notes = str(ev.get("notes") or "")
                         
                         # Categorize for SVG
                         cat = "other"
