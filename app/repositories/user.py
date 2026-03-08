@@ -13,6 +13,35 @@ class UserRepository:
         chars = string.ascii_uppercase + string.digits
         return ''.join(random.choice(chars) for _ in range(length))
 
+    def get_by_id(self, user_id: int) -> Optional[Dict[str, Any]]:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        try:
+            cursor.execute(
+                """SELECT id, public_id, email, hashed_password, role, tier, is_active,
+                          name, additional_data, dob
+                   FROM users WHERE id = %s""",
+                (user_id,)
+            )
+            row = cursor.fetchone()
+            if row:
+                return {
+                    "id": row[0],
+                    "public_id": row[1],
+                    "email": row[2],
+                    "hashed_password": row[3],
+                    "role": row[4],
+                    "tier": row[5],
+                    "is_active": row[6],
+                    "name": row[7],
+                    "additional_data": row[8] or {},
+                    "dob": row[9]
+                }
+            return None
+        finally:
+            cursor.close()
+            conn.close()
+
     def get_by_email(self, email: str) -> Optional[Dict[str, Any]]:
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -47,6 +76,7 @@ class UserRepository:
         email: str,
         hashed_password: str,
         name: Optional[str] = None,
+        role: str = "user",
         additional_data: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
         conn = get_db_connection()
@@ -63,12 +93,12 @@ class UserRepository:
             )
             tenant_id = cursor.fetchone()[0]
 
-            # 2. Create User
+            # 2. Create User (with role)
             cursor.execute(
-                """INSERT INTO users (public_id, email, hashed_password, name, additional_data)
-                   VALUES (%s, %s, %s, %s, %s)
-                   RETURNING id, public_id, email, is_active, name, additional_data""",
-                (public_id, email, hashed_password, name, json.dumps(additional_data))
+                """INSERT INTO users (public_id, email, hashed_password, name, role, additional_data)
+                   VALUES (%s, %s, %s, %s, %s, %s)
+                   RETURNING id, public_id, email, is_active, name, additional_data, role""",
+                (public_id, email, hashed_password, name, role, json.dumps(additional_data))
             )
             user_row = cursor.fetchone()
             user_id = user_row[0]
@@ -88,6 +118,7 @@ class UserRepository:
                 "is_active": user_row[3],
                 "name": user_row[4],
                 "additional_data": user_row[5] or {},
+                "role": user_row[6],
                 "tenant_id": tenant_id,
                 "tenant_slug": tenant_public_id.lower(),
             }
@@ -97,6 +128,8 @@ class UserRepository:
         finally:
             cursor.close()
             conn.close()
+
+
 
     def create_api_key(self, tenant_id: int, description: str = "Default") -> str:
         conn = get_db_connection()

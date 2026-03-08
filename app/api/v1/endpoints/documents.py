@@ -2,6 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from app.api.deps import get_current_tenant_from_api_secret_or_jwt, get_mongo_db
 from app.repositories.document import DocumentRepository
 from app.services.s3 import s3_service
+from app.services.textract import textract_service
+from app.core.config import settings
 import datetime
 
 router = APIRouter()
@@ -28,12 +30,16 @@ async def upload_document(
         # 1. Upload to S3
         s3_service.upload_file(file_content, s3_key, file.content_type)
         
-        # 2. Save metadata
+        # 2. Trigger Textract Analysis (AI Feature)
+        extracted_text = await textract_service.analyze_document(settings.S3_BUCKET_NAME, s3_key)
+        
+        # 3. Save metadata
         doc_meta = {
             "filename": file.filename,
             "s3_key": s3_key,
             "content_type": file.content_type,
-            "file_size": file_size
+            "file_size": file_size,
+            "extracted_text": extracted_text
         }
         doc_id = await repo.save_document(tenant_id, doc_meta)
         

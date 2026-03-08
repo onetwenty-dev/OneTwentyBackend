@@ -34,6 +34,7 @@ class AuthService:
             email=user_in.email,
             hashed_password=hashed_password,
             name=user_in.name,
+            role=user_in.role or "user",
             additional_data=user_in.additional_data or {},
         )
 

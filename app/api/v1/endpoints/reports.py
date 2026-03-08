@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from app.api.deps import get_current_tenant_from_api_secret_or_jwt, get_mongo_db
 from app.services.report import ReportService
 from app.services.pdf_gen import PDFGenerator
+from app.services.ai_agent import AIAgentService
 from app.repositories.entries import EntriesRepository
 from app.repositories.event import EventRepository
 from app.repositories.user import UserRepository
@@ -92,7 +93,15 @@ async def generate_report(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Data aggregation failed: {str(e)}")
 
-    # 3. Generate PDF
+    # 3. AI Analysis
+    try:
+        ai_summary = await AIAgentService.generate_clinical_summary(report_data)
+        report_data["ai_summary"] = ai_summary
+    except Exception as e:
+        print(f"AI Analysis failed: {e}")
+        ai_summary = None
+
+    # 4. Generate PDF
     try:
         pdf_content = pdf_gen.create_pdf(report_data, owner)
     except Exception as e:
@@ -103,9 +112,10 @@ async def generate_report(
 
     # 4. Upload & Presign
     try:
-        if not pdf_gen.bucket_name:
-             # Fallback if bucket not configured in secrets
-             raise HTTPException(status_code=500, detail="S3 Bucket not configured in settings.")
+        # Check if bucket is configured via the imported s3_service
+        from app.services.s3 import s3_service
+        if not s3_service.bucket_name:
+             raise HTTPException(status_code=500, detail="S3 Bucket name not found in configuration.")
              
         presigned_url, s3_key = pdf_gen.upload_and_presign(pdf_content, tenant_id)
         
@@ -114,6 +124,7 @@ async def generate_report(
             "range": range,
             "report_url": presigned_url,
             "s3_key": s3_key,
+            "ai_summary": ai_summary,
             "expires_in": 3600
         }
         await report_repo.save_report(tenant_id, report_meta)

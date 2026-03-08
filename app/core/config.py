@@ -37,6 +37,7 @@ class Settings(BaseSettings):
     AWS_REGION: str = "ap-south-1"
     BEDROCK_MODEL_ID: str = "meta.llama3-8b-instruct-v1:0"
     AWS_S3_BUCKET: str = ""
+    BEDROCK_API_KEY: Optional[str] = None
     
     class Config:
         env_file = ".env"

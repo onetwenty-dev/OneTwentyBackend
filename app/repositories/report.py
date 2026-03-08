@@ -13,6 +13,7 @@ class ReportRepository:
             "range": report_data.get("range"),
             "report_url": report_data.get("report_url"),
             "s3_key": report_data.get("s3_key"),
+            "ai_summary": report_data.get("ai_summary"),
             "created_at": datetime.datetime.utcnow(),
             "expires_in": report_data.get("expires_in", 3600)
         }

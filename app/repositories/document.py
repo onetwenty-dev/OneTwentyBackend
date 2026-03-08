@@ -14,6 +14,7 @@ class DocumentRepository:
             "s3_key": doc_data.get("s3_key"),
             "content_type": doc_data.get("content_type"),
             "file_size": doc_data.get("file_size"),
+            "extracted_text": doc_data.get("extracted_text"),
             "created_at": datetime.datetime.utcnow()
         }
         result = await self.collection.insert_one(doc)

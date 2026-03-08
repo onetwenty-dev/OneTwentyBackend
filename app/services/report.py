@@ -76,7 +76,13 @@ class ReportService:
             "days_covered": 0
         }
 
-        agp_data = {}
+        agp_data = {
+            "median": [],
+            "p25": [],
+            "p75": [],
+            "p10": [],
+            "p90": []
+        }
         daily_groups = []
 
         if not df_entries.empty and "sgv" in df_entries.columns:

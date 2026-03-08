@@ -40,42 +40,11 @@ _ID_RE = re.compile(r"^[a-f\d]{24}$", re.IGNORECASE)
 
 async def _resolve_tenant(request: Request, api_secret: Optional[str]) -> str:
     """
-    Multi-strategy auth resolution (mirrors original OneTwenty):
-    1. api-secret header
-    2. Authorization: Bearer <jwt>
-    3. Host subdomain
-    Raises 401 if none match.
+    Multi-strategy auth resolution (mirrors original OneTwenty).
+    Passes directly into deps.py for robust Auth/Doctor Cross-Tenant checking.
     """
-    tenant_id: Optional[str] = None
-
-    if api_secret:
-        tenant_id = get_tenant_from_api_key(request, api_secret)
-
-    if not tenant_id:
-        auth_header = request.headers.get("Authorization", "")
-        if auth_header.startswith("Bearer "):
-            try:
-                from jose import jwt
-                from app.core.config import settings
-                from app.repositories.user import UserRepository
-
-                token = auth_header[7:]
-                payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
-                user_id = int(payload.get("sub"))
-                repo = UserRepository()
-                tid = repo.get_tenant_for_user(user_id)
-                tenant_id = str(tid) if tid else None
-            except Exception:
-                pass
-
-    if not tenant_id:
-        from app.api.deps import get_tenant_from_subdomain
-        tenant_id = get_tenant_from_subdomain(request)
-
-    if not tenant_id:
-        raise HTTPException(status_code=401, detail="Authentication required")
-
-    return tenant_id
+    from app.api.deps import get_current_tenant_from_api_secret_or_jwt
+    return get_current_tenant_from_api_secret_or_jwt(request, api_secret)
 
 
 def _last_modified_header(entries: List[Dict]) -> Optional[str]:

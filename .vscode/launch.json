@@ -5,7 +5,7 @@
             "name": "Python: FastAPI (backend_python)",
             "type": "debugpy",
             "request": "launch",
-            "python": "${workspaceFolder}/venv/bin/python",
+            "python": "${command:python.interpreterPath}",
             "module": "uvicorn",
             "cwd": "${workspaceFolder}",
             "args": [

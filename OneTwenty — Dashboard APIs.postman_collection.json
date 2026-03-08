@@ -1,0 +1,1395 @@
+{
+  "info": {
+    "_postman_id": "0697b848-9e5f-4799-be43-df15bfe1fe80",
+    "name": "OneTwenty \u2014 Dashboard APIs",
+    "description": "Complete dashboard API collection for OneTwenty.\n\n**Setup:**\n1. Set `base_url` variable to `http://localhost:8000/api/v1`\n2. Call **Login** \u2192 copy `access_token` to the `access_token` variable\n3. For patient-side requests, set `patient_access_token` similarly\n\n**Variables:** base_url, access_token, patient_access_token, patient_id, appointment_id, doctor_id, invite_code",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string",
+      "description": "JWT for doctor"
+    },
+    {
+      "key": "patient_access_token",
+      "value": "",
+      "type": "string",
+      "description": "JWT for patient"
+    },
+    {
+      "key": "patient_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "appointment_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "doctor_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "invite_code",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refresh_token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "\ud83d\udd11 Auth",
+      "description": "",
+      "item": [
+        {
+          "name": "Doctor Signup",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/signup",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "signup"
+              ]
+            },
+            "description": "Sign up as a **doctor**. Use `role='doctor'`.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"dr.smith@clinic.com\",\n  \"password\": \"pass1234!\",\n  \"name\": \"Dr. Smith\",\n  \"role\": \"doctor\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Patient Signup",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/signup",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "signup"
+              ]
+            },
+            "description": "Sign up as a **patient**. `role='user'` is the default.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"patient@example.com\",\n  \"password\": \"pass1234!\",\n  \"name\": \"Alice Johnson\",\n  \"role\": \"user\",\n  \"additional_data\": {\n    \"diabetes_type\": \"type1\",\n    \"units\": \"mg/dl\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Login. Copy `access_token` to the collection variable.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": \"dr.smith@clinic.com\",\n  \"password\": \"pass1234!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get My Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/profile",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "profile"
+              ]
+            },
+            "description": "Returns name, email, dob, additional_data, tenant_slug, and subdomain_url."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Profile Details",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/details",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "details"
+              ]
+            },
+            "description": "Update name, dob, diabetes_type, and any additional_data.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Dr. Smith Updated\",\n  \"dob\": \"1985-03-15\",\n  \"diabetes_type\": \"type1\",\n  \"additional_data\": {\n    \"onboarding_completed\": true\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get API Secret",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/api-secret",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "api-secret"
+              ]
+            },
+            "description": "Get (or create) the Nightscout-compatible API secret for this user's tenant."
+          },
+          "response": []
+        },
+        {
+          "name": "Reset API Secret",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/reset-api-secret",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "reset-api-secret"
+              ]
+            },
+            "description": "Rotate/regenerate the API secret."
+          },
+          "response": []
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/refresh-token",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "refresh-token"
+              ],
+              "query": [
+                {
+                  "key": "refresh_token",
+                  "value": "{{refresh_token}}",
+                  "disabled": false
+                }
+              ]
+            },
+            "description": "Exchange refresh token for a new access token."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "\ud83d\udc68\u200d\u2695\ufe0f Doctor \u2014 Profile & Onboarding",
+      "description": "",
+      "item": [
+        {
+          "name": "Onboard Doctor",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/doctor/onboard",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "doctor",
+                "onboard"
+              ]
+            },
+            "description": "First-time doctor profile setup. Must have `role=doctor`.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"specialty\": \"Endocrinology\",\n  \"license_number\": \"MED12345\",\n  \"clinic_name\": \"Sunrise Diabetes Clinic\",\n  \"clinic_address\": \"123 Health St, Mumbai, MH 400001\",\n  \"phone\": \"+91-9876543210\",\n  \"bio\": \"Specialist in Type 1 and Type 2 diabetes management.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Doctor Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/doctor/profile",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "doctor",
+                "profile"
+              ]
+            },
+            "description": "Get own doctor profile including clinic info."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Doctor Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/doctor/profile",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "doctor",
+                "profile"
+              ]
+            },
+            "description": "Partial update \u2014 send only fields to change.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"specialty\": \"Diabetology\",\n  \"clinic_name\": \"Sunrise Advanced Clinic\",\n  \"phone\": \"+91-9876543210\",\n  \"name\": \"Dr. Smith\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "\ud83d\udd17 Doctor \u2014 Patient Management",
+      "description": "",
+      "item": [
+        {
+          "name": "Generate Invite Code",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/doctor/invite",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "doctor",
+                "invite"
+              ]
+            },
+            "description": "Generate a 6-char invite code (valid 24h). Share with patient so they can call `POST /patient/connect`."
+          },
+          "response": []
+        },
+        {
+          "name": "List My Patients",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/doctor/patients",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "doctor",
+                "patients"
+              ]
+            },
+            "description": "All connected patients with live glucose reading, trend arrow, and tenant info."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Patient Detail",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/doctor/patients/{{patient_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "doctor",
+                "patients",
+                "{{patient_id}}"
+              ]
+            },
+            "description": "Full profile of a connected patient (demographics + CGM tenant info)."
+          },
+          "response": []
+        },
+        {
+          "name": "Patient Current Glucose",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/doctor/patients/{{patient_id}}/current",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "doctor",
+                "patients",
+                "{{patient_id}}",
+                "current"
+              ]
+            },
+            "description": "Latest CGM reading for the patient. Same shape as Nightscout `/entries/current`."
+          },
+          "response": []
+        },
+        {
+          "name": "Patient Glucose History",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/doctor/patients/{{patient_id}}/entries",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "doctor",
+                "patients",
+                "{{patient_id}}",
+                "entries"
+              ],
+              "query": [
+                {
+                  "key": "count",
+                  "value": "100",
+                  "disabled": false
+                }
+              ]
+            },
+            "description": "Recent glucose entries for the patient."
+          },
+          "response": []
+        },
+        {
+          "name": "Patient Events / Treatments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/doctor/patients/{{patient_id}}/events",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "doctor",
+                "patients",
+                "{{patient_id}}",
+                "events"
+              ],
+              "query": [
+                {
+                  "key": "count",
+                  "value": "50",
+                  "disabled": false
+                }
+              ]
+            },
+            "description": "Patient's insulin doses, carbs, and other treatments."
+          },
+          "response": []
+        },
+        {
+          "name": "Remove Patient",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/doctor/patients/{{patient_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "doctor",
+                "patients",
+                "{{patient_id}}"
+              ]
+            },
+            "description": "Remove patient from your list. Patient must re-connect to rejoin."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "\ud83d\udcca Doctor \u2014 Dashboard Overview",
+      "description": "",
+      "item": [
+        {
+          "name": "Get Overview Stats",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/doctor/overview",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "doctor",
+                "overview"
+              ]
+            },
+            "description": "Returns: `total_patients`, `alerts_active`, `avg_time_in_range`, `upcoming_appointments`."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "\ud83d\ude4b Patient \u2014 Doctor Connection",
+      "description": "",
+      "item": [
+        {
+          "name": "Connect to Doctor",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{patient_access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/patient/connect",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "patient",
+                "connect"
+              ]
+            },
+            "description": "Patient submits the 6-char code from their doctor. Links patient to the doctor.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"{{invite_code}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List My Doctors",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{patient_access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/patient/my-doctors",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "patient",
+                "my-doctors"
+              ]
+            },
+            "description": "Patient sees all doctors who have access to their CGM data."
+          },
+          "response": []
+        },
+        {
+          "name": "Revoke Doctor Access",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{patient_access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/patient/revoke/{{doctor_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "patient",
+                "revoke",
+                "{{doctor_id}}"
+              ]
+            },
+            "description": "Patient permanently removes a doctor's data access."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "\ud83d\udcc5 Appointments",
+      "description": "",
+      "item": [
+        {
+          "name": "List All Appointments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/appointments",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "appointments"
+              ]
+            },
+            "description": "All appointments for the doctor (upcoming + past)."
+          },
+          "response": []
+        },
+        {
+          "name": "List Upcoming Appointments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/appointments",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "appointments"
+              ],
+              "query": [
+                {
+                  "key": "filter",
+                  "value": "upcoming",
+                  "disabled": false
+                }
+              ]
+            },
+            "description": "Only future/scheduled appointments."
+          },
+          "response": []
+        },
+        {
+          "name": "List Past Appointments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/appointments",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "appointments"
+              ],
+              "query": [
+                {
+                  "key": "filter",
+                  "value": "past",
+                  "disabled": false
+                }
+              ]
+            },
+            "description": "Only past appointments."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Appointment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/appointments",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "appointments"
+              ]
+            },
+            "description": "Schedule appointment. Patient must be connected first. type: Follow-up | Urgent | Review | Initial",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"patient_id\": 2,\n  \"scheduled_at\": \"2026-03-15T10:00:00\",\n  \"duration_min\": 30,\n  \"type\": \"Follow-up\",\n  \"notes\": \"Review last 2 weeks of CGM data\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Appointment",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/appointments/{{appointment_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "appointments",
+                "{{appointment_id}}"
+              ]
+            },
+            "description": "Get a single appointment by ID."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Appointment",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/appointments/{{appointment_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "appointments",
+                "{{appointment_id}}"
+              ]
+            },
+            "description": "Update time, type, notes, or status. status: scheduled | completed | cancelled",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"scheduled_at\": \"2026-03-15T11:00:00\",\n  \"status\": \"completed\",\n  \"notes\": \"Follow-up complete. Next review in 1 month.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Appointment",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/appointments/{{appointment_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "appointments",
+                "{{appointment_id}}"
+              ]
+            },
+            "description": "Cancel and permanently delete an appointment."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "\ud83d\udccb Reports",
+      "description": "",
+      "item": [
+        {
+          "name": "List Reports",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/reports/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "reports"
+              ]
+            },
+            "description": "List all reports for the logged-in user's tenant."
+          },
+          "response": []
+        },
+        {
+          "name": "Generate Report",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/reports/generate",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "reports",
+                "generate"
+              ],
+              "query": [
+                {
+                  "key": "range",
+                  "value": "14d",
+                  "disabled": false
+                }
+              ]
+            },
+            "description": "Trigger report generation for a time range."
+          },
+          "response": []
+        },
+        {
+          "name": "Dashboard Report Data",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/reports/dashboard",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "reports",
+                "dashboard"
+              ],
+              "query": [
+                {
+                  "key": "range",
+                  "value": "1w",
+                  "disabled": false
+                }
+              ]
+            },
+            "description": "Get pre-aggregated report data for dashboard charts."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "\ud83e\udd16 AI Chat",
+      "description": "",
+      "item": [
+        {
+          "name": "Send Text Message",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/chat/text",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "chat",
+                "text"
+              ]
+            },
+            "description": "Send a message to the AI assistant. Returns AI-generated clinical insight.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"What does my glucose pattern look like this week?\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Chat History",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/chat/history",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "chat",
+                "history"
+              ]
+            },
+            "description": "Retrieve the conversation history with the AI assistant."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "\ud83d\udd50 Clock Device",
+      "description": "",
+      "item": [
+        {
+          "name": "Get Clock Config",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/clock-config",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "clock-config"
+              ]
+            },
+            "description": "Get the clock config linked to the logged-in user's tenant."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Clock Config",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/clock-config",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "clock-config"
+              ]
+            },
+            "description": "Create a clock configuration entry for a new device.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clock_id\": \"CLK001\",\n  \"wifi_name\": \"HomeNetwork\",\n  \"wifi_password\": \"wifipass123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Clock Config",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/clock-config",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "clock-config"
+              ]
+            },
+            "description": "Update WiFi credentials for an existing clock.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clock_id\": \"CLK001\",\n  \"wifi_name\": \"NewNetwork\",\n  \"wifi_password\": \"newpass456\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Assign Clock to Account",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/clock-config/assign",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "clock-config",
+                "assign"
+              ]
+            },
+            "description": "Link a physical clock (by clock_id) to the logged-in user's tenant.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clock_id\": \"CLK001\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

@@ -1351,7 +1351,7 @@
             ]
         },
         {
-            "name": "AI Agent (Voice & Chat)",
+            "name": "OneTwenty AI Assistant",
             "item": [
                 {
                     "name": "POST Chat Text",
@@ -1388,7 +1388,7 @@
                                 "text"
                             ]
                         },
-                        "description": "Send natural language text to extract events and get AI insights via AWS Bedrock."
+                        "description": "Send natural language text to the OneTwenty AI Assistant. Upgraded to Claude 3 Haiku for improved accuracy. Uses a compact context format (TOON-like) to reduce token usage by ~80% while seeing more history. Extracts events like carbs and insulin automatically."
                     },
                     "response": []
                 },
@@ -1431,7 +1431,7 @@
                                 }
                             ]
                         },
-                        "description": "Upload an audio file to be transcribed by AWS Transcribe and processed by Bedrock."
+                        "description": "Upload an audio file to be transcribed by AWS Transcribe and processed by Claude 3 Haiku. Includes optimized historical context for accurate insights."
                     },
                     "response": []
                 },
@@ -1504,7 +1504,7 @@
                                 }
                             ]
                         },
-                        "description": "Generate a PDF report and upload to S3. Returns a pre-signed URL."
+                        "description": "Generate a professional PDF report. This automatically triggers the AI Clinical Summary (Bedrock) to provide personalized insights (Wins & Focus Areas) based on your glucose data. Returns a pre-signed S3 URL."
                     }
                 },
                 {
@@ -1563,76 +1563,6 @@
                         "description": "Get dashboard metrics and AGP chart data."
                     },
                     "response": []
-                }
-            ]
-        },
-        {
-            "name": "AI Agent (Priya)",
-            "item": [
-                {
-                    "name": "Text Chat",
-                    "request": {
-                        "method": "POST",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application/json"
-                            },
-                            {
-                                "key": "api-secret",
-                                "value": "{{api_secret_hash}}"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\n  \"message\": \"I just ate a sandwich with 40g carbs\",\n  \"timezone\": \"Asia/Kolkata\"\n}"
-                        },
-                        "url": {
-                            "raw": "{{local}}/api/v1/chat/text",
-                            "host": [
-                                "{{local}}"
-                            ],
-                            "path": [
-                                "api",
-                                "v1",
-                                "chat",
-                                "text"
-                            ]
-                        }
-                    }
-                },
-                {
-                    "name": "Voice Chat",
-                    "request": {
-                        "method": "POST",
-                        "header": [
-                            {
-                                "key": "api-secret",
-                                "value": "{{api_secret_hash}}"
-                            }
-                        ],
-                        "body": {
-                            "mode": "formdata",
-                            "formdata": [
-                                {
-                                    "key": "file",
-                                    "type": "file"
-                                }
-                            ]
-                        },
-                        "url": {
-                            "raw": "{{local}}/api/v1/chat/voice",
-                            "host": [
-                                "{{local}}"
-                            ],
-                            "path": [
-                                "api",
-                                "v1",
-                                "chat",
-                                "voice"
-                            ]
-                        }
-                    }
                 }
             ]
         },

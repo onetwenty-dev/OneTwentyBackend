@@ -463,6 +463,87 @@
             color: var(--text-primary);
         }
 
+        .ai-insights-card {
+            background: linear-gradient(135deg, #f0f7ff 0%, #ffffff 100%);
+            border-radius: 4mm;
+            padding: 4.5mm 5.5mm;
+            border: 1px solid #d0e4ff;
+            margin-bottom: 4mm;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ai-insights-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1.5mm;
+            background: linear-gradient(90deg, #3B6EA8, #5AAF72);
+        }
+
+        .ai-insights-header {
+            display: flex;
+            align-items: center;
+            gap: 2mm;
+            margin-bottom: 2.5mm;
+        }
+
+        .ai-insights-header .priya-avatar {
+            width: 8mm;
+            height: 8mm;
+            background: #3B6EA8;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 10pt;
+            font-weight: 700;
+        }
+
+        .ai-insights-title {
+            font-size: 9pt;
+            font-weight: 700;
+            color: #3B6EA8;
+        }
+
+        .ai-summary-text {
+            font-size: 8.5pt;
+            line-height: 1.5;
+            color: var(--text-primary);
+            margin-bottom: 3mm;
+            font-style: italic;
+        }
+
+        .ai-grid {
+            display: flex;
+            gap: 4mm;
+        }
+
+        .ai-detail-box {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.6);
+            padding: 2mm 3mm;
+            border-radius: 2mm;
+            border: 1px solid rgba(59, 110, 168, 0.1);
+        }
+
+        .ai-detail-label {
+            font-size: 6pt;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.8mm;
+        }
+
+        .ai-detail-content {
+            font-size: 7.5pt;
+            line-height: 1.4;
+            color: var(--text-primary);
+        }
+
         .page-footer {
             position: absolute;
             bottom: 8mm;
@@ -566,6 +647,33 @@
             </div>
         </div>
 
+        {% if ai_summary %}
+        <div class="section-label">OneTwenty Clinical Brief</div>
+        <div class="ai-insights-card">
+            <div class="ai-insights-header">
+                <div class="priya-avatar">OT</div>
+                <div class="ai-insights-title">OneTwenty Clinical Brief</div>
+            </div>
+            <div class="ai-summary-text">
+                "{{ ai_summary.summary }}"
+            </div>
+            <div class="ai-grid">
+                <div class="ai-detail-box">
+                    <div class="ai-detail-label" style="color: #5AAF72;">This Week's Win</div>
+                    <div class="ai-detail-content">
+                        {{ ai_summary.win }}
+                    </div>
+                </div>
+                <div class="ai-detail-box">
+                    <div class="ai-detail-label" style="color: #F4913B;">Focus Area</div>
+                    <div class="ai-detail-content">
+                        {{ ai_summary.focus_area }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
         <div class="section-label">Time in Range</div>
         <div class="tir-card">
             <div class="tir-grid">
@@ -610,29 +718,39 @@
 
                         <!-- AGP Paths -->
                         {% macro points_to_path(pts) -%}
+                        {% if pts and pts|length > 0 %}
                         M {{ pts[0].x }} {{ pts[0].y }}
                         {%- for p in pts[1:] %} L {{ p.x }} {{ p.y }}{% endfor %}
+                        {% endif %}
                         {%- endmacro %}
 
-                        {% set median_pts = [] %}{% for v in agp.median %}{% do median_pts.append({'x': (loop.index0 /
-                        23) * AW, 'y': H - ((v - G_MIN) / (G_MAX - G_MIN)) * H}) %}{% endfor %}
-                        {% set p10_pts = [] %}{% for v in agp.p10 %}{% do p10_pts.append({'x': (loop.index0 / 23) * AW,
-                        'y': H - ((v - G_MIN) / (G_MAX - G_MIN)) * H}) %}{% endfor %}
-                        {% set p90_pts = [] %}{% for v in agp.p90 %}{% do p90_pts.append({'x': (loop.index0 / 23) * AW,
-                        'y': H - ((v - G_MIN) / (G_MAX - G_MIN)) * H}) %}{% endfor %}
-                        {% set p25_pts = [] %}{% for v in agp.p25 %}{% do p25_pts.append({'x': (loop.index0 / 23) * AW,
-                        'y': H - ((v - G_MIN) / (G_MAX - G_MIN)) * H}) %}{% endfor %}
-                        {% set p75_pts = [] %}{% for v in agp.p75 %}{% do p75_pts.append({'x': (loop.index0 / 23) * AW,
-                        'y': H - ((v - G_MIN) / (G_MAX - G_MIN)) * H}) %}{% endfor %}
+                        {% set median_pts = [] %}{% for v in agp.median %}{% if v > 0 %}{% do median_pts.append({'x': (loop.index0 /
+                        23) * AW, 'y': H - ((v - G_MIN) / (G_MAX - G_MIN)) * H}) %}{% endif %}{% endfor %}
+                        {% set p10_pts = [] %}{% for v in agp.p10 %}{% if v > 0 %}{% do p10_pts.append({'x': (loop.index0 / 23) * AW,
+                        'y': H - ((v - G_MIN) / (G_MAX - G_MIN)) * H}) %}{% endif %}{% endfor %}
+                        {% set p90_pts = [] %}{% for v in agp.p90 %}{% if v > 0 %}{% do p90_pts.append({'x': (loop.index0 / 23) * AW,
+                        'y': H - ((v - G_MIN) / (G_MAX - G_MIN)) * H}) %}{% endif %}{% endfor %}
+                        {% set p25_pts = [] %}{% for v in agp.p25 %}{% if v > 0 %}{% do p25_pts.append({'x': (loop.index0 / 23) * AW,
+                        'y': H - ((v - G_MIN) / (G_MAX - G_MIN)) * H}) %}{% endif %}{% endfor %}
+                        {% set p75_pts = [] %}{% for v in agp.p75 %}{% if v > 0 %}{% do p75_pts.append({'x': (loop.index0 / 23) * AW,
+                        'y': H - ((v - G_MIN) / (G_MAX - G_MIN)) * H}) %}{% endif %}{% endfor %}
 
+                        {% if p10_pts|length > 0 and p90_pts|length > 0 %}
                         <path
                             d="{{ points_to_path(p10_pts) }} {% for p in p90_pts|reverse %}L {{ p.x }} {{ p.y }} {% endfor %}Z"
                             fill="rgba(59,110,168,0.10)" />
+                        {% endif %}
+                        
+                        {% if p25_pts|length > 0 and p75_pts|length > 0 %}
                         <path
                             d="{{ points_to_path(p25_pts) }} {% for p in p75_pts|reverse %}L {{ p.x }} {{ p.y }} {% endfor %}Z"
                             fill="rgba(59,110,168,0.22)" />
+                        {% endif %}
+
+                        {% if median_pts|length > 0 %}
                         <path d="{{ points_to_path(median_pts) }}" fill="none" stroke="#3B6EA8" stroke-width="2"
                             stroke-linecap="round" />
+                        {% endif %}
                     </g>
                 </svg>
             </div>

@@ -6,6 +6,7 @@ class UserCreate(BaseModel):
     email: EmailStr
     password: str = Field(..., min_length=8, max_length=72)
     name: Optional[str] = Field(None, max_length=255)
+    role: Optional[str] = Field(default="user", description="'user' for patients, 'doctor' for doctors")
     # All onboarding/personalization data goes here — flexible, app can send any fields
     additional_data: Optional[Dict[str, Any]] = Field(default_factory=dict)
     # Example additional_data contents:

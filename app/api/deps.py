@@ -147,6 +147,7 @@ def get_current_tenant_from_api_secret_or_jwt(
     api_secret: Optional[str] = Header(None, alias="api-secret")
 ) -> str:
     tenant_id = None
+    target_tenant_id = get_tenant_from_subdomain(request)
     
     if api_secret:
         try:
@@ -164,12 +165,42 @@ def get_current_tenant_from_api_secret_or_jwt(
                 payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
                 user_id = int(payload.get("sub"))
                 repo = UserRepository()
-                tenant_id = str(repo.get_tenant_for_user(user_id))
+                user_tenant_id = repo.get_tenant_for_user(user_id)
+                
+                if target_tenant_id and str(target_tenant_id) != str(user_tenant_id):
+                    # Cross-tenant check for doctors
+                    conn = get_db_connection()
+                    try:
+                        with conn.cursor() as cursor:
+                            cursor.execute("SELECT role, additional_data FROM users WHERE id = %s", (user_id,))
+                            row = cursor.fetchone()
+                            if row:
+                                role, add_data = row[0], row[1] or {}
+                                actual_role = "doctor" if role == "doctor" or add_data.get("role") == "doctor" else role
+                                
+                                if actual_role == "doctor":
+                                    cursor.execute("SELECT user_id FROM tenant_users WHERE tenant_id = %s AND role = 'owner' LIMIT 1", (target_tenant_id,))
+                                    owner_row = cursor.fetchone()
+                                    if owner_row:
+                                        patient_id = owner_row[0]
+                                        cursor.execute("SELECT 1 FROM doctor_patients WHERE doctor_id = %s AND patient_id = %s", (user_id, patient_id))
+                                        if cursor.fetchone():
+                                            tenant_id = str(target_tenant_id)
+                    finally:
+                        conn.close()
+                    
+                    if not tenant_id:
+                        raise HTTPException(status_code=403, detail="Not authorized to access this tenant")
+                else:
+                    tenant_id = str(user_tenant_id) if user_tenant_id else None
+            except HTTPException as e:
+                raise e
             except Exception:
                 pass
                 
-    if not tenant_id:
-        tenant_id = get_tenant_from_subdomain(request)
+    if not tenant_id and getattr(request, "method", "") == "GET" and target_tenant_id:
+        # Fallback for public dashboards (temporary/legacy behavior)
+        tenant_id = target_tenant_id
         
     if not tenant_id:
         raise HTTPException(status_code=401, detail="Authentication required")
