@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from app.api.v1.endpoints import (
     entries, auth, status, doctors, websocket, chat, events, reports, clock, documents,
-    patient, appointments,
+    patient, appointments, downloads
 )
 
 api_router = APIRouter()
@@ -17,3 +17,4 @@ api_router.include_router(chat.router, prefix="/chat", tags=["chat", "ai"])
 api_router.include_router(reports.router, prefix="/reports", tags=["reports"])
 api_router.include_router(clock.router, tags=["clock"])
 api_router.include_router(documents.router, prefix="/documents", tags=["documents"])
+api_router.include_router(downloads.router, tags=["downloads"])
