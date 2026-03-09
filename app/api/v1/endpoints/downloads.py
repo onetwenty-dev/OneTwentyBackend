@@ -5,7 +5,7 @@ import os
 router = APIRouter()
 
 # Use absolute path to the APK file as found in the project directory
-APK_PATH = "/home/zo/Desktop/projects/OneTwenty/app-release(1).apk"
+APK_PATH = "./app-release(1).apk"
 
 @router.get("/download-apk", response_class=FileResponse)
 async def download_apk():
